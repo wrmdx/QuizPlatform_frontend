@@ -1,11 +1,11 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
-import {setCredentials,logOut} from "@/features/auth/authSlice.jsx";
+import { logOut, setCredentials} from "@/features/auth/authSlice.jsx";
 
 const baseQuery = fetchBaseQuery({
     baseUrl: import.meta.env.VITE_BACKEND_API_URL,
     credentials: 'include',
     prepareHeaders: (headers) => {
-        const token = localStorage.getItem('token');
+        const token = sessionStorage.getItem('token');
         if (token) {
             headers.set('authorization', `Bearer ${token}`);
         }
@@ -30,8 +30,7 @@ const baseQueryWithReauth = async (args, api, extraOptions) => {
 };
 
 export const apiSlice = createApi({
-    baseQuery : baseQueryWithReauth,
+    baseQuery ,
     endpoints : (builder) => ({
-
     })
 })
