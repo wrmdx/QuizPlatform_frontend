@@ -3,7 +3,7 @@ import { useSelector } from "react-redux";
 import {selectCurrentRole} from "@/features/auth/authSlice.jsx";
 
 // eslint-disable-next-line react/prop-types
-const RequireAuth_Role = ({ allowedRoles }) => {
+const RequireAuthRole = ({ allowedRoles }) => {
     const role = useSelector(selectCurrentRole);
 
     // eslint-disable-next-line react/prop-types
@@ -14,4 +14,4 @@ const RequireAuth_Role = ({ allowedRoles }) => {
 
 };
 
-export default RequireAuth_Role;
+export default RequireAuthRole;

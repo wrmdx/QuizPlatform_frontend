@@ -4,11 +4,13 @@ import { useDeleteQuestionMutation } from "@/features/questions/questionsApiSlic
 import { useToast } from "@/components/ui/use-toast";
 import { ToastAction } from "@/components/ui/toast";
 import {useState} from "react";
+import {Trash2} from "lucide-react";
 
-export const DeleteQuestionSheet = ({ id }) => {
+export const DeleteQuestionSheet = ({ id , onDeleteSuccess }) => {
     const [isOpen, setIsOpen] = useState(false);
     const [deleteQuestion, { isLoading }] = useDeleteQuestionMutation();
     const { toast } = useToast();
+
 
     const handleDelete = async () => {
         try {
@@ -17,6 +19,7 @@ export const DeleteQuestionSheet = ({ id }) => {
                 description: result.message,
             });
             setIsOpen(false);
+            onDeleteSuccess();
         } catch (err) {
             console.error('Failed to delete the question:', err);
             toast({
@@ -32,7 +35,7 @@ export const DeleteQuestionSheet = ({ id }) => {
         <Sheet open={isOpen} onOpenChange={setIsOpen}>
             <SheetTrigger asChild>
                 <Button variant="ghost" className="text-red-500">
-                    Delete
+                    <Trash2/>
                 </Button>
             </SheetTrigger>
             <SheetContent>

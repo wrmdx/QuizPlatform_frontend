@@ -1,127 +1,121 @@
-import {
-    flexRender,
-    getCoreRowModel,
-    useReactTable,
-    getSortedRowModel,
-    getFilteredRowModel,
-    getPaginationRowModel
-} from "@tanstack/react-table";
+import { useState, useEffect } from "react";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import { Label } from "@/components/ui/label";
+import { useSearchQuestionsMutation } from "@/features/questions/questionsApiSlice.jsx";
+import { useGetResponsesQuery } from "@/features/responses/responsesApiSlice.jsx";
+import Spinner from "@/components/ui/Spinner.jsx";
+import {DeleteQuestionSheet} from "@/components/q&a/DeleteQuestionSheet.jsx";
 
-import {
-    Table,
-    TableBody,
-    TableCell,
-    TableHead,
-    TableHeader,
-    TableRow,
-} from "@/components/ui/table.jsx";
-import { useState } from "react";
-import { Input } from "@/components/ui/input.jsx";
-import { Button } from "@/components/ui/button.jsx";
-import {AddQuestionForm} from "@/components/q&a/AddQuestionForm.jsx";
 
-export function QuestionsDataTable({ columns, data}) {
-    const [columnFilters, setColumnFilters] = useState([]);
-    const [sorting, setSorting] = useState([]);
-    const [pagination, setPagination] = useState({ pageIndex: 0, pageSize: 6 });
 
-    const table = useReactTable({
-        data,
-        columns,
-        getCoreRowModel: getCoreRowModel(),
-        getSortedRowModel: getSortedRowModel(),
-        getFilteredRowModel: getFilteredRowModel(),
-        getPaginationRowModel: getPaginationRowModel(),
-        onSortingChange: setSorting,
-        onColumnFiltersChange: setColumnFilters,
-        onPaginationChange: setPagination,
-        state: {
-            sorting,
-            columnFilters,
-            pagination
+export function QA_Card({ searchQuery }) {
+
+    const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
+    const [searchQuestions, { data: questions = [], isLoading, isError   }] = useSearchQuestionsMutation();
+    const [showResponses, setShowResponses] = useState(false);
+    const currentQuestion = questions[currentQuestionIndex];
+    const {
+        data: responses = [],
+        isLoading: responsesLoading,
+        isError: responsesError,
+    } = useGetResponsesQuery(currentQuestion?.id, { skip: !currentQuestion });
+
+    useEffect(() => {
+        setShowResponses(false);
+    }, [currentQuestionIndex]);
+
+    useEffect(() => {
+        if (searchQuery) {
+            const timeoutId = setTimeout(() => searchQuestions(searchQuery), 1500);
+            return () => clearTimeout(timeoutId);
         }
-    });
+    }, [searchQuery]);
+
+    const handleDeleteSuccess = () => {
+        searchQuestions(searchQuery);
+        setCurrentQuestionIndex(0);
+    };
+
+    if (isLoading || responsesLoading) return <div className="flex items-center justify-center"><p>Loading... <Spinner/></p></div>;
+    if (isError || responsesError) return <div className="flex items-center justify-center"><p>Error loading data</p></div>;
+    if (!questions.length) return <div className="flex items-center justify-center"><p>No questions found!</p></div>;
+
+    const handlePrevious = () => {
+        setCurrentQuestionIndex((prevIndex) => Math.max(prevIndex - 1, 0));
+    };
+
+    const handleNext = () => {
+        setCurrentQuestionIndex((prevIndex) => Math.min(prevIndex + 1, questions.length - 1));
+    };
+    const toggleResponses = () => {
+        setShowResponses(!showResponses);
+    };
 
     return (
-        <>
-            <div className="rounded-md border">
-                <div className="flex items-center justify-between pt-4 pb-10 px-4">
-                    <div className="flex-1">
-                        <Input
-                            placeholder="Filter questions..."
-                            value={table.getColumn("description")?.getFilterValue() ?? ""}
-                            onChange={(event) =>
-                                table.getColumn("description")?.setFilterValue(event.target.value)
-                            }
-                            className="max-w-sm"
-                        />
-                    </div>
-                    <AddQuestionForm/>
-                </div>
-
-                <Table>
-                    <TableHeader>
-                        {table.getHeaderGroups().map((headerGroup) => (
-                            <TableRow key={headerGroup.id}>
-                                {headerGroup.headers.map((header) => (
-                                    <TableHead key={header.id}>
-                                        {header.isPlaceholder
-                                            ? null
-                                            : flexRender(
-                                                header.column.columnDef.header,
-                                                header.getContext()
-                                            )}
-                                    </TableHead>
-                                ))}
-                            </TableRow>
-                        ))}
-                    </TableHeader>
-                    <TableBody>
-                        {table.getRowModel().rows?.length ? (
-                            table.getRowModel().rows.map((row) => (
-                                <TableRow
-                                    key={row.id}
-                                    data-state={row.getIsSelected() && "selected"}
-                                >
-                                    {row.getVisibleCells().map((cell) => (
-                                        <TableCell key={cell.id}>
-                                            {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                                        </TableCell>
+        <div className="p-4">
+            {currentQuestion && (
+                <Card className="w-auto">
+                    <CardHeader>
+                        <CardTitle className="flex justify-between items-center">
+                            <span>Question {currentQuestionIndex + 1}</span>
+                            <DeleteQuestionSheet id={currentQuestion.id} onDeleteSuccess={handleDeleteSuccess}  />
+                        </CardTitle>
+                        <CardDescription>Type : {currentQuestion.type}</CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                        {currentQuestion.description}
+                    </CardContent>
+                    <CardContent>
+                        {showResponses ? (
+                            responses.length > 0 ? (
+                                <div className="space-y-4">
+                                    {responses.map((response) => (
+                                        <div key={response.id} className="flex items-center space-x-2">
+                                            <Label
+                                                className={`flex-grow p-2 border rounded ${
+                                                    response.iscorrect ? 'bg-green-100 border-green-500' : 'bg-gray-100'
+                                                }`}
+                                            >
+                                                {response.content}
+                                            </Label>
+                                        </div>
                                     ))}
-                                </TableRow>
-                            ))
-                        ) : (
-                            <TableRow>
-                                <TableCell colSpan={columns.length + 1} className="h-24 text-center">
-                                    No results.
-                                </TableCell>
-                            </TableRow>
-                        )}
-                    </TableBody>
-
-                </Table>
-            </div>
-            <div className="flex items-center justify-end space-x-2 py-4">
-                <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => table.previousPage()}
-                    disabled={!table.getCanPreviousPage()}
-                >
-                    Previous
-                </Button>
-                <span>
-                    Page {table.getState().pagination.pageIndex + 1} of {table.getPageCount()}
-                </span>
-                <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => table.nextPage()}
-                    disabled={!table.getCanNextPage()}
-                >
-                    Next
-                </Button>
-            </div>
-        </>
+                                </div>
+                            ) : (
+                                <div>No responses assigned yet</div>
+                            )
+                        ) : null}
+                    </CardContent>
+                    <CardFooter className="flex justify-between items-center">
+                        <div className="flex items-center space-x-2">
+                            <Button
+                                variant="outline"
+                                onClick={handlePrevious}
+                                disabled={currentQuestionIndex === 0}
+                            >
+                                Previous
+                            </Button>
+                            <span>{currentQuestionIndex + 1} / {questions.length}</span>
+                            <Button
+                                variant="outline"
+                                onClick={handleNext}
+                                disabled={currentQuestionIndex === questions.length - 1}
+                            >
+                                Next
+                            </Button>
+                        </div>
+                        <Button
+                            onClick={toggleResponses}
+                            variant="outline"
+                        >
+                            {showResponses ? 'Hide Responses' : 'Show Responses'}
+                        </Button>
+                    </CardFooter>
+                </Card>
+            )}
+        </div>
     );
 }
+
+export default QA_Card;

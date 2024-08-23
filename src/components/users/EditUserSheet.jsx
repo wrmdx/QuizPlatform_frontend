@@ -39,11 +39,13 @@ export const EditUserSheet = ({id,firstName,lastName,email}) => {
             first_name: firstName,
             last_name: lastName,
             email: email,
-            password:''
         },
     });
     const onSubmit = async (data) => {
         try {
+            if (!data.password) {
+                delete data.password;
+            }
             console.log(data) ;
             const result = await updateUser({ id,data }).unwrap();
             console.log(result.message) ;

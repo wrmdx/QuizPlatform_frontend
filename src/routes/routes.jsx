@@ -1,12 +1,11 @@
-import { Users, BookCheck , CircleHelp , LayoutDashboard , ClipboardMinus ,ListChecks   } from "lucide-react";
+import { Users, BookCheck , CircleHelp , LayoutDashboard , ClipboardMinus    } from "lucide-react";
 
 
 const adminRoutes = [
     { url: "/admin/dashboard", name: "Dashboard", icon: <LayoutDashboard className="mr-2 w-4 h-4" /> },
     { url: "/admin/users", name: "User", icon: <Users className="mr-2 w-4 h-4" /> },
     { url: "/admin/quizzes", name: "Quiz", icon: <BookCheck className="mr-2 w-4 h-4" /> },
-    { url: "/admin/questions", name: "Question", icon: <CircleHelp className="mr-2 w-4 h-4" /> },
-    { url: "/admin/responses", name: "Response", icon: <ListChecks className="mr-2 w-4 h-4" /> },
+    { url: "/admin/qa", name: "Q&A", icon: <CircleHelp className="mr-2 w-4 h-4" /> },
     { url: "/admin/reports", name: "Reports", icon: <ClipboardMinus className="mr-2 w-4 h-4" /> },
 ];
 

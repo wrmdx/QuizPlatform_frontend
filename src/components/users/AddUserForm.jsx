@@ -19,7 +19,7 @@ import {
     SelectValue,
 } from "@/components/ui/select";
 import { z } from "zod";
-import { useForm } from "react-hook-form";
+import {Controller, useForm} from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
     Form,
@@ -38,7 +38,7 @@ import { useAddUserMutation } from "@/features/users/usersApiSlice";
 const formSchema = z.object({
     first_name: z.string().min(2, "First name is required").max(50),
     last_name: z.string().min(2, "Last name is required").max(50),
-    role_id: z.string(),
+    role_name: z.string(),
     email: z.string().email("Invalid email address"),
     password: z.string().min(8, "Password must be at least 8 characters long"),
 });
@@ -53,7 +53,7 @@ export function AddUserForm() {
         defaultValues: {
             first_name: "",
             last_name: "",
-            role_id: "",
+            role_name: "",
             email: "",
             password: "",
         },
@@ -61,6 +61,7 @@ export function AddUserForm() {
 
     const onSubmit = async (data) => {
         try {
+            console.log(data);
             await addUser(data).unwrap();
             setDialogOpen(false);
             toast({
@@ -120,9 +121,9 @@ export function AddUserForm() {
                                 </FormItem>
                             )}
                         />
-                        <FormField
+                        <Controller
                             control={form.control}
-                            name="role_id"
+                            name="role_name"
                             render={({ field }) => (
                                 <FormItem>
                                     <FormLabel>Role</FormLabel>
@@ -133,9 +134,9 @@ export function AddUserForm() {
                                             </SelectTrigger>
                                         </FormControl>
                                         <SelectContent>
-                                            <SelectItem value="1">Admin</SelectItem>
-                                            <SelectItem value="2">Manager</SelectItem>
-                                            <SelectItem value="3">Developer</SelectItem>
+                                            <SelectItem value="admin">Admin</SelectItem>
+                                            <SelectItem value="manager">Manager</SelectItem>
+                                            <SelectItem value="dev">Developer</SelectItem>
                                         </SelectContent>
                                     </Select>
                                     <FormMessage />
