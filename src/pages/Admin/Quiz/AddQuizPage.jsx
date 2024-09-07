@@ -1,11 +1,11 @@
-import { Input } from "@/components/ui/input";
+import { Input } from "@/components/ui/input.jsx";
 import {
     Select,
     SelectContent,
     SelectItem,
     SelectTrigger,
     SelectValue,
-} from "@/components/ui/select";
+} from "@/components/ui/select.jsx";
 import { z } from "zod";
 import { Controller, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -16,10 +16,10 @@ import {
     FormItem,
     FormLabel,
     FormMessage,
-} from "@/components/ui/form";
-import { useToast } from "@/components/ui/use-toast";
+} from "@/components/ui/form.jsx";
+import { useToast } from "@/components/ui/use-toast.js";
 import { useAddQuizMutation } from "@/features/quizzes/quizzesApiSlice.jsx";
-import { ToastAction } from "@/components/ui/toast"
+import { ToastAction } from "@/components/ui/toast.jsx"
 import {useAddDifficultyMutation, useGetDifficultiesQuery} from "@/features/difficulty/difficultiesApiSlice.jsx";
 import {useAddSkillMutation, useGetSkillsQuery} from "@/features/skills/skillsApiSlice.jsx";
 import {BreadCrumb} from "@/components/quizzes/BreadCrumb.jsx";
@@ -38,6 +38,7 @@ const formSchema = z.object({
 });
 
 export function AddQuizPage() {
+
     const [isAddingNewDifficulty, setIsAddingNewDifficulty] = useState(false);
     const [newDifficulty, setNewDifficulty] = useState("");
     const [isAddingNewSkill, setIsAddingNewSkill] = useState(false);
@@ -112,7 +113,7 @@ export function AddQuizPage() {
     return (
         <main className="w-screen p-4">
             <div className="px-4 py-4">
-                <BreadCrumb role={role} />
+                <BreadCrumb role={role} text={"Quiz"} action={"Add"} />
             </div>
                 <Form {...form}>
                     <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">

@@ -7,13 +7,13 @@ import {DeleteUserSheet} from "@/components/users/DeleteUserSheet.jsx"
 export const columns = [
     {
         accessorKey: "id",
-        header: ({column}) => (
+        header: ({ column }) => (
             <Button
                 variant="ghost"
                 onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
             >
                 ID
-                <ArrowUpDown className="ml-2 h-4 w-4"/>
+                <ArrowUpDown className="ml-2 h-4 w-4" />
             </Button>
         ),
     },
@@ -26,41 +26,35 @@ export const columns = [
         header: "Last Name",
     },
     {
-        accessorKey: "role",
-        header: ({column}) => (
-            <Button
-                variant="ghost"
-                onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-            >
-                Role
-                <ArrowUpDown className="ml-2 h-4 w-4"/>
-            </Button>
-        ),
+        accessorKey: "role.name",
+        header: "Role",
     },
     {
         accessorKey: "email",
-        header: ({column}) => (
+        header: ({ column }) => (
             <Button
                 variant="ghost"
                 onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
             >
                 Email
-                <ArrowUpDown className="ml-2 h-4 w-4"/>
+                <ArrowUpDown className="ml-2 h-4 w-4" />
             </Button>
         ),
     },
     {
         id: "action",
         header: "Action",
-        cell: ({row}) => (
+        cell: ({ row }) => (
             <div className="flex space-x-2">
                 <EditUserSheet
                     id={row.original.id}
                     firstName={row.original.first_name}
                     lastName={row.original.last_name}
                     email={row.original.email}
+                    updated_at={row.original.updated_at}
+                    created_at={row.original.created_at}
                 />
-                <DeleteUserSheet id={row.original.id}/>
+                <DeleteUserSheet id={row.original.id} />
             </div>
         ),
     }

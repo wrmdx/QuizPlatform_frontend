@@ -9,7 +9,10 @@ import ErrorPage from "@/pages/Error/ErrorPage.jsx";
 import rootLoader from "@/loaders/rootLoader.jsx";
 import Users from "@/pages/Admin/Users.jsx"
 import QA from "@/pages/Admin/Q&A.jsx"
-import Quiz from "@/pages/Admin/Quiz.jsx";
+import Quiz from "@/pages/Admin/Quiz/Quiz.jsx";
+import {AddQuizPage} from "@/pages/Admin/Quiz/AddQuizPage.jsx";
+import PublicRoute from "@/features/auth/publicRoute.jsx";
+import Assign_QA_QuizPage from "@/pages/Admin/Quiz/Assign_Q&A_QuizPage.jsx";
 
 
 function App() {
@@ -17,8 +20,11 @@ function App() {
     return (
         <Routes>
             <Route path="/" element={<Layout />} loader={rootLoader}>
-
-                <Route path="/login" element={<Login />}/>
+                <Route path="/login"  element={
+                    <PublicRoute>
+                        <Login />
+                    </PublicRoute>
+                } />
                 <Route path="unauthorized" element={<ErrorPage />} />
 
                 <Route path="admin" element={<RequireAuthRole allowedRoles={['admin']} />}>
@@ -27,13 +33,15 @@ function App() {
                     <Route path="users" element={<Users />} />
                     <Route path="qa" element={<QA />} />
                     <Route path="quizzes" element={<Quiz />} />
+                    <Route path="quizzes/add" element={<AddQuizPage />} />
+                    <Route path="quizzes/assign_qa/:quizId" element={<Assign_QA_QuizPage />} />
 
 
                 </Route>
 
                 <Route path="manager" element={<RequireAuthRole allowedRoles={['manager']} />}>
                     <Route path="" element={<ManagerDashboard />} />
-                    <Route path="dahsboard" element={<ManagerDashboard />} />
+                    <Route path="dashboard" element={<ManagerDashboard />} />
                 </Route>
 
                 <Route path="dev" element={<RequireAuthRole allowedRoles={['dev']} />}>

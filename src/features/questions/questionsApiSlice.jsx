@@ -2,11 +2,10 @@ import { apiSlice } from '@/services/api/apiSlice';
 
 export const questionsApiSlice = apiSlice.injectEndpoints({
     endpoints: (builder) => ({
-        searchQuestions: builder.mutation({
-            query: (searchTerm) => ({
-                url: `/admin/questions/search`,
-                method: 'POST',
-                body: { search: searchTerm },
+        searchQuestions: builder.query({
+            query: ({search , per_page , page}) => ({
+                url: `/admin/question/search_by_description`,
+                params: { description: search, per_page, page },
             }),
             providesTags: ['Questions'],
         }),
@@ -21,18 +20,18 @@ export const questionsApiSlice = apiSlice.injectEndpoints({
             query: (body) => ({
                 url: `/admin/questions`,
                 method: 'POST',
-                body : body
+                body: body,
             }),
             invalidatesTags: ['Questions'],
         }),
-        getQuestion: builder.query({
-            query: (id) => ({
-                url: `/admin/questions/${id}`,
-                method: 'GET',
+        getQuestions: builder.query({
+            query: ({per_page, page}) => ({
+                url: `/admin/questions`,
+                params: { per_page, page },
             }),
             providesTags: ['Questions'],
         }),
     }),
 })
 
-export const { useSearchQuestionsMutation,useGetQuestionQuery, useDeleteQuestionMutation , useAddQuestionMutation} = questionsApiSlice;
+export const { useSearchQuestionsQuery, useGetQuestionsQuery, useDeleteQuestionMutation, useAddQuestionMutation } = questionsApiSlice;

@@ -30,9 +30,13 @@ export const DeleteUserSheet = ({ id }) => {
     return (
         <Sheet open={isOpen} onOpenChange={setIsOpen}>
             <SheetTrigger asChild>
-                <Button variant="ghost" className="text-red-500">
+                <Button
+                    variant="ghost"
+                    className="text-red-500 hover:text-white hover:bg-red-600"
+                >
                     Delete
                 </Button>
+
             </SheetTrigger>
             <SheetContent>
                 <SheetHeader>

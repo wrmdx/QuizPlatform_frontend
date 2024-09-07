@@ -1,5 +1,4 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
-import { logOut, setCredentials} from "@/features/auth/authSlice.jsx";
 
 const baseQuery = fetchBaseQuery({
     baseUrl: import.meta.env.VITE_BACKEND_API_URL,
@@ -13,24 +12,24 @@ const baseQuery = fetchBaseQuery({
     }
 });
 
-const baseQueryWithReauth = async (args, api, extraOptions) => {
-    let result = await baseQuery(args, api, extraOptions);
-
-    if (result?.error?.originalStatus === 403) {
-        console.log('Token expired, refreshing token');
-        const refreshResult = await baseQuery('/refresh-token', api, extraOptions);
-        if (refreshResult?.data?.token) {
-            api.dispatch(setCredentials({ token: refreshResult.data.token }));
-            result = await baseQuery(args, api, extraOptions);
-        } else {
-            api.dispatch(logOut());
-        }
-    }
-    return result;
-};
+// const baseQueryWithReauth = async (args, api, extraOptions) => {
+//     let result = await baseQuery(args, api, extraOptions);
+//
+//     if (result?.error?.status === 401) {
+//         console.log('Token expired, refreshing token');
+//         const refreshResult = await baseQuery('/refresh-token', api, extraOptions);
+//         if (refreshResult?.data?.access_token) {
+//             sessionStorage.setItem('token', refreshResult.data.access_token);
+//             result = await baseQuery(args, api, extraOptions);
+//         } else {
+//             api.dispatch(logOut());
+//         }
+//     }
+//     return result;
+// };
 
 export const apiSlice = createApi({
     baseQuery ,
-    endpoints : (builder) => ({
-    })
-})
+    endpoints: (builder) => ({})
+});
+

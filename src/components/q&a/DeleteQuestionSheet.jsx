@@ -6,7 +6,7 @@ import { ToastAction } from "@/components/ui/toast";
 import {useState} from "react";
 import {Trash2} from "lucide-react";
 
-export const DeleteQuestionSheet = ({ id , onDeleteSuccess }) => {
+export const DeleteQuestionSheet = ({ id }) => {
     const [isOpen, setIsOpen] = useState(false);
     const [deleteQuestion, { isLoading }] = useDeleteQuestionMutation();
     const { toast } = useToast();
@@ -19,7 +19,6 @@ export const DeleteQuestionSheet = ({ id , onDeleteSuccess }) => {
                 description: result.message,
             });
             setIsOpen(false);
-            onDeleteSuccess();
         } catch (err) {
             console.error('Failed to delete the question:', err);
             toast({

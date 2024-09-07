@@ -20,9 +20,12 @@ import Spinner from "@/components/ui/Spinner.jsx";
 import {Link} from "react-router-dom"
 import Navmenu from "@/components/ui/navMenu.jsx";
 import { getRoutesByRole } from '@/routes/routes';
+import ChangePasswordDialog from "@/components/users/ChangePasswordDialog.jsx";
+
 
 
 const SideBar = () => {
+
     const navigate = useNavigate();
     const dispatch = useDispatch();
     const [logout, { isLoading: isLoggingOut }] = useLogoutMutation();
@@ -53,7 +56,7 @@ const SideBar = () => {
         <div className="flex">
             <nav className="flex flex-col justify-between border-l border px-4 py-3 w-full">
                 <div className="flex h-14 items-center px-4 lg:h-[60px] lg:px-6" id="logo">
-                    <Link to="/" className="flex items-center gap-2 font-semibold">
+                    <Link to={role+"/dashboard"} className="flex items-center gap-2 font-semibold">
                             <span className="border-b text-2xl">
                                 <span className="text-blue-700">KJR</span>
                                 Quiz</span>
@@ -63,6 +66,9 @@ const SideBar = () => {
                     <Navmenu routes={routes}/>
                 </div>
                 <div className="mt-auto">
+                    <div className="mb-4">
+                        <ChangePasswordDialog/>
+                    </div>
                     <AlertDialog>
                         <AlertDialogTrigger asChild>
                             <Button
@@ -72,28 +78,29 @@ const SideBar = () => {
                             >
                                 {isLoggingOut ? (
                                     <Spinner className="mr-2"/>
-                                ) : (
-                                    <LogOut className="mr-2 h-4 w-4"/>
-                                )}
-                                Sign out
-                            </Button>
+                                    ) : (
+                                        <LogOut className="mr-2 h-4 w-4"/>
+                                    )}
+                                    Sign out
+                                </Button>
                         </AlertDialogTrigger>
-                        <AlertDialogContent>
-                            <AlertDialogHeader>
-                                <AlertDialogTitle>Are you sure?</AlertDialogTitle>
-                                <AlertDialogDescription>
-                                    This action will log you out.
-                                </AlertDialogDescription>
-                            </AlertDialogHeader>
-                            <AlertDialogFooter>
-                                <AlertDialogCancel>Cancel</AlertDialogCancel>
-                                <AlertDialogAction onClick={handleLogout}>
-                                    Continue
-                                </AlertDialogAction>
-                            </AlertDialogFooter>
-                        </AlertDialogContent>
+                            <AlertDialogContent>
+                                <AlertDialogHeader>
+                                    <AlertDialogTitle>Are you sure?</AlertDialogTitle>
+                                    <AlertDialogDescription>
+                                        This action will log you out.
+                                    </AlertDialogDescription>
+                                </AlertDialogHeader>
+                                <AlertDialogFooter>
+                                    <AlertDialogCancel>Cancel</AlertDialogCancel>
+                                    <AlertDialogAction onClick={handleLogout}>
+                                        Continue
+                                    </AlertDialogAction>
+                                </AlertDialogFooter>
+                            </AlertDialogContent>
                     </AlertDialog>
-                </div>
+
+                    </div>
             </nav>
         </div>
 

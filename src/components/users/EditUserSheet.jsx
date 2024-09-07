@@ -17,11 +17,12 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Form, FormLabel, FormItem, FormField, FormControl, FormMessage } from "@/components/ui/form"
 import { useState } from "react";
+import {ReloadIcon} from "@radix-ui/react-icons";
 
-export const EditUserSheet = ({id,firstName,lastName,email}) => {
+export const EditUserSheet = ({id,firstName,lastName,email , updated_at,created_at}) => {
 
     const [isOpen, setIsOpen] = useState(false);
-    const [updateUser] = useUpdateUserMutation();
+    const [updateUser, {isLoading}] = useUpdateUserMutation();
     const { toast } = useToast();
 
 
@@ -68,7 +69,7 @@ export const EditUserSheet = ({id,firstName,lastName,email}) => {
     return (
         <Sheet open={isOpen} onOpenChange={setIsOpen}>
             <SheetTrigger asChild>
-                <Button variant="ghost" className="text-blue-500">
+                <Button variant="ghost" className="text-blue-500 hover:text-white hover:bg-blue-500">
                     Edit
                 </Button>
             </SheetTrigger>
@@ -82,7 +83,7 @@ export const EditUserSheet = ({id,firstName,lastName,email}) => {
                             <FormField
                                 control={form.control}
                                 name="first_name"
-                                render={({ field }) => (
+                                render={({field}) => (
                                     <FormItem>
                                         <FormLabel>First Name</FormLabel>
                                         <FormControl>
@@ -92,14 +93,14 @@ export const EditUserSheet = ({id,firstName,lastName,email}) => {
                                                 className="col-span-3"
                                             />
                                         </FormControl>
-                                        <FormMessage />
+                                        <FormMessage/>
                                     </FormItem>
                                 )}
                             />
                             <FormField
                                 control={form.control}
                                 name="last_name"
-                                render={({ field }) => (
+                                render={({field}) => (
                                     <FormItem>
                                         <FormLabel>Last Name</FormLabel>
                                         <FormControl>
@@ -109,14 +110,14 @@ export const EditUserSheet = ({id,firstName,lastName,email}) => {
                                                 className="col-span-3"
                                             />
                                         </FormControl>
-                                        <FormMessage />
+                                        <FormMessage/>
                                     </FormItem>
                                 )}
                             />
                             <FormField
                                 control={form.control}
                                 name="email"
-                                render={({ field }) => (
+                                render={({field}) => (
                                     <FormItem>
                                         <FormLabel>Email</FormLabel>
                                         <FormControl>
@@ -127,14 +128,14 @@ export const EditUserSheet = ({id,firstName,lastName,email}) => {
                                                 className="col-span-3"
                                             />
                                         </FormControl>
-                                        <FormMessage />
+                                        <FormMessage/>
                                     </FormItem>
                                 )}
                             />
                             <FormField
                                 control={form.control}
                                 name="password"
-                                render={({ field }) => (
+                                render={({field}) => (
                                     <FormItem>
                                         <FormLabel>Password</FormLabel>
                                         <FormControl>
@@ -145,13 +146,27 @@ export const EditUserSheet = ({id,firstName,lastName,email}) => {
                                                 className="col-span-3"
                                             />
                                         </FormControl>
-                                        <FormMessage />
+                                        <FormMessage/>
                                     </FormItem>
                                 )}
                             />
+                            <div className="mt-4"><p className="text-sm">Created at : {created_at.split('.')[0].replace('T', ' at ')} </p>
+                            </div>
+                            <div className="mt-4"><p className="text-sm">Last Updated : {updated_at.split('.')[0].replace('T', ' at ')} </p>
+                            </div>
+
                         </div>
                         <SheetFooter>
-                            <Button type="submit">Save changes</Button>
+                            {isLoading ?
+                                (
+                                    <Button disabled>
+                                        <ReloadIcon className="mr-2 h-4 w-4 animate-spin"/>
+                                        Please wait
+                                    </Button>
+                                ) : (
+                                    <Button type="submit">Save changes</Button>
+                                )}
+
                             <SheetClose asChild>
                                 <Button type="button" variant="outline">Cancel</Button>
                             </SheetClose>

@@ -32,6 +32,7 @@ import {
 import { ToastAction } from "@/components/ui/toast";
 import { useToast } from "@/components/ui/use-toast";
 import { useAddUserMutation } from "@/features/users/usersApiSlice";
+import {ReloadIcon} from "@radix-ui/react-icons";
 
 
 
@@ -82,8 +83,8 @@ export function AddUserForm() {
     return (
         <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
             <DialogTrigger asChild>
-                <Button variant="outline" size="icon" className="mr-4">
-                    <Plus className="h-4 w-4" />
+                <Button variant="outline" className="mr-4">
+                    <Plus className="h-4 w-4" />Add User
                 </Button>
             </DialogTrigger>
             <DialogContent className="sm:max-w-[425px] overflow-y-auto">
@@ -170,9 +171,15 @@ export function AddUserForm() {
                             )}
                         />
                         <DialogFooter>
-                            <Button type="submit" disabled={isLoading}>
-                                {isLoading ? 'Submitting...' : 'Submit'}
-                            </Button>
+                            {!isLoading ?
+                                <Button type="submit" >Submit </Button>
+                            :
+                                <Button disabled>
+                                    <ReloadIcon className="mr-2 h-4 w-4 animate-spin"/>
+                                    Please wait
+                                </Button>
+                            }
+
                         </DialogFooter>
                     </form>
                 </Form>

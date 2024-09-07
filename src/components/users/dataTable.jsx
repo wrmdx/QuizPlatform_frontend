@@ -3,7 +3,6 @@ import {
     getCoreRowModel,
     useReactTable,
     getSortedRowModel,
-    getFilteredRowModel,
     getPaginationRowModel
 } from "@tanstack/react-table";
 
@@ -16,49 +15,29 @@ import {
     TableRow,
 } from "@/components/ui/table.jsx";
 import { useState } from "react";
-import { Input } from "@/components/ui/input.jsx";
-import { Button } from "@/components/ui/button.jsx";
-import {AddUserForm} from "@/components/users/AddUserForm.jsx";
+import {Pagination} from "@/components/my_ui/Pagination.jsx";
 
-export function DataTable({ columns, data}) {
-    const [columnFilters, setColumnFilters] = useState([]);
+export function DataTable({ columns, data, pagination, onPaginationChange }) {
     const [sorting, setSorting] = useState([]);
-    const [pagination, setPagination] = useState({ pageIndex: 0, pageSize: 6 });
 
     const table = useReactTable({
         data,
         columns,
         getCoreRowModel: getCoreRowModel(),
         getSortedRowModel: getSortedRowModel(),
-        getFilteredRowModel: getFilteredRowModel(),
         getPaginationRowModel: getPaginationRowModel(),
         onSortingChange: setSorting,
-        onColumnFiltersChange: setColumnFilters,
-        onPaginationChange: setPagination,
         state: {
             sorting,
-            columnFilters,
             pagination
-        }
+        },
+        manualPagination: true,
+        pageCount: pagination.pageCount
     });
 
     return (
         <>
             <div className="rounded-md border">
-                <div className="flex items-center justify-between pt-4 pb-10 px-4">
-                    <div className="flex-1">
-                        <Input
-                            placeholder="Filter emails..."
-                            value={table.getColumn("email")?.getFilterValue() ?? ""}
-                            onChange={(event) =>
-                                table.getColumn("email")?.setFilterValue(event.target.value)
-                            }
-                            className="max-w-sm"
-                        />
-                    </div>
-                    <AddUserForm/>
-                </div>
-
                 <Table>
                     <TableHeader>
                         {table.getHeaderGroups().map((headerGroup) => (
@@ -92,35 +71,19 @@ export function DataTable({ columns, data}) {
                             ))
                         ) : (
                             <TableRow>
-                                <TableCell colSpan={columns.length + 1} className="h-24 text-center">
+                                <TableCell colSpan={columns.length} className="h-24 text-center">
                                     No results.
                                 </TableCell>
                             </TableRow>
                         )}
                     </TableBody>
-
                 </Table>
             </div>
             <div className="flex items-center justify-end space-x-2 py-4">
-                <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => table.previousPage()}
-                    disabled={!table.getCanPreviousPage()}
-                >
-                    Previous
-                </Button>
-                <span>
-                    Page {table.getState().pagination.pageIndex + 1} of {table.getPageCount()}
-                </span>
-                <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => table.nextPage()}
-                    disabled={!table.getCanNextPage()}
-                >
-                    Next
-                </Button>
+                <Pagination
+                    pagination={pagination}
+                    onPaginationChange={onPaginationChange}
+                />
             </div>
         </>
     );

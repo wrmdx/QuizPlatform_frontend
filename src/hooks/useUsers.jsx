@@ -1,12 +1,11 @@
-import { useState, useEffect, useCallback } from "react";
+import {  useCallback } from "react";
 import {
     useGetUsersQuery,
     useGetUsersByRoleQuery,
     useGetUsersByEmailQuery,
 } from "@/features/users/usersApiSlice";
 
-const useUsersData = ({ queryParams, selectedRole, debouncedEmailFilter }) => {
-    const [pagination, setPagination] = useState(null);
+export const useUsers = ({ queryParams, setQueryParams, selectedRole, debouncedEmailFilter }) => {
 
     const { data: allUsersData, isLoading: isLoadingAllUsers, isError: isErrorAllUsers } =
         useGetUsersQuery(queryParams, { skip: !!selectedRole || !!debouncedEmailFilter });
@@ -27,22 +26,10 @@ const useUsersData = ({ queryParams, selectedRole, debouncedEmailFilter }) => {
                 setQueryParams((prev) => ({ ...prev, page: prev.page - 1 }));
             }
         },
-        [data]
+        [data, setQueryParams]
     );
 
-    useEffect(() => {
-        if (data) {
-            setPagination({
-                pageIndex: data.current_page,
-                pageSize: data.per_page,
-                pageCount: data.last_page,
-                canNextPage: !!data.next_page_url,
-                canPreviousPage: !!data.prev_page_url,
-            });
-        }
-    }, [data]);
 
-    return { data, isLoading, isError, handlePaginationChange, pagination };
+    return { data, isLoading, isError, handlePaginationChange };
 };
 
-export default useUsersData;

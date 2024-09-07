@@ -5,7 +5,7 @@ import {useSelector} from "react-redux";
 import {selectCurrentRole} from "@/features/auth/authSlice.jsx";
 
 export function AddQuizLink() {
-    const role = useSelector(selectCurrentRole)
+    const role = useSelector(selectCurrentRole);
     return (
         <Link to={`/${role}/quizzes/add`}>
             <Button variant="outline" className="mr-4">

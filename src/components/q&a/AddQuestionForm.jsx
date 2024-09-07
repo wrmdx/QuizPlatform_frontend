@@ -36,11 +36,14 @@ import { Separator } from "@/components/ui/separator"
 import { Checkbox } from "@/components/ui/checkbox"
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 import {useAddResponseMutation, useSetResponsesMutation} from "@/features/responses/responsesApiSlice.jsx";
+import {ReloadIcon} from "@radix-ui/react-icons";
+import { Input } from "@/components/ui/input"
 
 
 
 const formSchema = z.object({
     description: z.string().min(2, "Description is required"),
+    duration: z.preprocess((value) => Number(value), z.number().min(3, "Duration must be at least 3")),
     type_name: z.enum(["qcm", "qcu"], {
         errorMap: () => ({ message: "Please select a question type" })
     }),
@@ -62,6 +65,7 @@ export function AddQuestionForm() {
         resolver: zodResolver(formSchema),
         defaultValues: {
             description: '',
+            duration:1 ,
             type_name: 'qcu',
             responses: responses
         },
@@ -91,10 +95,11 @@ export function AddQuestionForm() {
     };
 
     const onSubmit = async (data) => {
-        const { description, type_name, responses } = data;
+        const { description,duration ,  type_name, responses } = data;
 
         const questionData = {
             description: description,
+            duration: duration ,
             type_name: type_name,
         };
 
@@ -148,11 +153,12 @@ export function AddQuestionForm() {
                 });
             }
     };
+
     return (
             <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
                 <DialogTrigger asChild>
-                    <Button variant="outline" size="icon" className="mr-4">
-                        <Plus className="h-4 w-4" />
+                    <Button variant="outline"  className="mr-4">
+                        <Plus className="h-4 w-4" /> Add Q&A
                     </Button>
                 </DialogTrigger>
                 <DialogContent className="w-full max-w-2xl max-h-svh overflow-y-auto">
@@ -172,6 +178,19 @@ export function AddQuestionForm() {
                                         <FormLabel>Description</FormLabel>
                                         <FormControl>
                                             <Textarea {...field} />
+                                        </FormControl>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
+                            <FormField
+                                control={form.control}
+                                name="duration"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel>Duration</FormLabel>
+                                        <FormControl>
+                                            <Input type="number" placeholder="" {...field} />
                                         </FormControl>
                                         <FormMessage />
                                     </FormItem>
@@ -246,10 +265,15 @@ export function AddQuestionForm() {
                             </Button>
 
                             <DialogFooter>
-                                <Button type="submit">
-                                    {isAddingQuestion || isAddingResponses || isAssigning ? 'Processing...' : 'Submit'}
-                                </Button>
-                                <Button
+                                {isAddingQuestion || isAddingResponses || isAssigning ? (
+                                        <Button disabled>
+                                            <ReloadIcon className="mr-2 h-4 w-4 animate-spin"/>
+                                                Please wait
+                                        </Button>
+                                    ) : (
+                                    <Button type="submit">Submit</Button>
+                                    )}
+                                    <Button
                                     variant="outline"
                                     type="button"
                                     onClick={() => {
