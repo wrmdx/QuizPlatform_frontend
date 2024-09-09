@@ -50,9 +50,15 @@ export const columns = [
             <div className="flex space-x-2">
                 <Link to={`assign_qa/${row.original.id}`}>
                     <Button variant="ghost" className="text-blue-500 hover:text-white hover:bg-blue-500">
-                        Questions
+                        Assign Questions
                     </Button>
                 </Link>
+                <Link to={`view_qa/${row.original.id}`}>
+                    <Button variant="ghost" className="text-green-500 hover:text-white hover:bg-green-400">
+                        View Questions
+                    </Button>
+                </Link>
+
                 <DeleteQuizSheet id={row.original.id}/>
             </div>
         ),

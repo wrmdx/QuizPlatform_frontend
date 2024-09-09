@@ -32,14 +32,18 @@ export const quizzesApiSlice = apiSlice.injectEndpoints({
                 method: 'DELETE',
             }),
             invalidatesTags: ['Quizzes'],
-        }),
+        }) ,
+        getQuizQuestions : builder.query({
+            query : ({quizId}) => `/admin/quiz/${quizId}/view_questions` ,
+            providesTags : ['Questions'] ,
+        }) ,
         assignQuizQuestions: builder.mutation({
             query: ({body ,quizId}) => ({
                 url:`/admin/quiz/${quizId}/assign-questions` ,
                 method:'POST' ,
                 body: body
             }),
-            invalidatesTags: ['Quizzes'],
+            invalidatesTags: ['Quizzes' , 'Questions'],
         }),
         deleteQuizQuestions: builder.mutation({
             query: ({quizId,body}) => ({
@@ -47,11 +51,12 @@ export const quizzesApiSlice = apiSlice.injectEndpoints({
                 method:'DELETE' ,
                 body: body
             }),
-            invalidatesTags: ['Quizzes'],
+            invalidatesTags: ['Quizzes' , 'Questions'],
         }),
     }),
 })
 
-export const { useGetQuizzesQuery, useAddQuizMutation , useDeleteQuizMutation, useAssignQuizQuestionsMutation,
-    useDeleteQuizQuestionsMutation,useGetQuizzesBySkillQuery, useSearchQuizzesByTitleQuery,
+export const {useDeleteQuizQuestionsMutation , useAssignQuizQuestionsMutation  ,
+    useGetQuizQuestionsQuery , useGetQuizzesQuery, useAddQuizMutation , useDeleteQuizMutation,
+    useGetQuizzesBySkillQuery, useSearchQuizzesByTitleQuery,
     useGetQuizzesByDifficultyQuery} = quizzesApiSlice;

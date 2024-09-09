@@ -113,7 +113,7 @@ export function AddQuizPage() {
     return (
         <main className="w-screen p-4">
             <div className="px-4 py-4">
-                <BreadCrumb role={role} text={"Quiz"} action={"Add"} />
+                <BreadCrumb route={"quizzes"} role={role} text={"Quiz"} action={"Add"} />
             </div>
                 <Form {...form}>
                     <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">

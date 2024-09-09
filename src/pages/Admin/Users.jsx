@@ -57,7 +57,7 @@ const Users = () => {
             ) : isError ? (
                 <div className="text-red-500">Failed to load questions.</div>
             ) : (
-                <>
+                <div>
                     <DataTable
                         columns={columns}
                         data={data?.data || []}
@@ -75,7 +75,7 @@ const Users = () => {
                             Total : {data.total || 0}
                         </p>
                     </div>
-                </>
+                </div>
             )}
         </div>
     );

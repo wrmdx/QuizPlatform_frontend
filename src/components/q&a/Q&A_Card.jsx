@@ -4,8 +4,9 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { DeleteQuestionSheet } from "@/components/q&a/DeleteQuestionSheet.jsx";
 import {ResponseSection} from "@/components/q&a/ResponseSection.jsx";
 import {Pagination} from "@/components/my_ui/Pagination.jsx";
+import { Checkbox } from "@/components/ui/checkbox"
 
-export function QA_Card({ data, onPaginationChange, pagination }) {
+export function QA_Card({ data, onPaginationChange, pagination  , selectedQuestions, onQuestionSelect}) {
 
     const [showResponses, setShowResponses] = useState({});
     const toggleResponses = (questionId) => {
@@ -24,7 +25,23 @@ export function QA_Card({ data, onPaginationChange, pagination }) {
                     <CardHeader>
                         <CardTitle className="flex justify-between items-center">
                             <span>Question {question.id}</span>
-                            <DeleteQuestionSheet id={question.id}/>
+                            <div className="flex items-center space-x-4">
+                                {selectedQuestions && onQuestionSelect && (
+                                    <div className="flex items-center space-x-2">
+                                        <Checkbox
+                                            checked={selectedQuestions.includes(question.id)}
+                                            onCheckedChange={() => onQuestionSelect(question.id)}
+                                        />
+                                        {/*<label*/}
+                                        {/*    htmlFor="terms"*/}
+                                        {/*    className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"*/}
+                                        {/*>*/}
+                                        {/*    {text}*/}
+                                        {/*</label>*/}
+                                    </div>
+                                )}
+                                <DeleteQuestionSheet id={question.id}/>
+                            </div>
                         </CardTitle>
                         <CardDescription>Type: {question.type}</CardDescription>
                         <CardDescription>Duration: {question.duration}</CardDescription>

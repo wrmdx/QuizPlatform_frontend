@@ -13,6 +13,7 @@ import Quiz from "@/pages/Admin/Quiz/Quiz.jsx";
 import {AddQuizPage} from "@/pages/Admin/Quiz/AddQuizPage.jsx";
 import PublicRoute from "@/features/auth/publicRoute.jsx";
 import Assign_QA_QuizPage from "@/pages/Admin/Quiz/Assign_Q&A_QuizPage.jsx";
+import View_QA_QuizPage from "@/pages/Admin/Quiz/View_QA_QuizPage.jsx";
 
 
 function App() {
@@ -35,6 +36,7 @@ function App() {
                     <Route path="quizzes" element={<Quiz />} />
                     <Route path="quizzes/add" element={<AddQuizPage />} />
                     <Route path="quizzes/assign_qa/:quizId" element={<Assign_QA_QuizPage />} />
+                    <Route path="quizzes/view_qa/:quizId" element={<View_QA_QuizPage />} />
 
 
                 </Route>

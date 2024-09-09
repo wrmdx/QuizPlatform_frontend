@@ -49,7 +49,7 @@ const formSchema = z.object({
     }),
     responses: z.array(z.object({
         description: z.string().min(1, "Response description is required"),
-        iscorrect: z.boolean(),
+        iscorrect: z.boolean()
     })),
 });
 

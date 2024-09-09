@@ -1,200 +1,144 @@
 import { BreadCrumb } from "@/components/quizzes/BreadCrumb.jsx";
 import { useSelector } from "react-redux";
 import { selectCurrentRole } from "@/features/auth/authSlice.jsx";
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card.jsx";
-import { Checkbox } from "@/components/ui/checkbox.jsx";
-import { Input } from "@/components/ui/input.jsx";
-import { Label } from "@/components/ui/label.jsx";
-import { Button } from "@/components/ui/button.jsx";
-import { useEffect, useState } from "react";
-import { useSearchQuestionsQuery } from "@/features/questions/questionsApiSlice.jsx";
-import { useGetResponsesQuery } from "@/features/responses/responsesApiSlice.jsx";
+import {useParams} from "react-router-dom";
 import Spinner from "@/components/ui/Spinner.jsx";
-import {useNavigate, useParams} from "react-router-dom";
-import {useAssignQuizQuestionsMutation} from "@/features/quizzes/quizzesApiSlice.jsx";
-import {useToast} from "@/components/ui/use-toast.js";
+import QA_Card from "@/components/q&a/Q&A_Card.jsx";
+import {Input} from "@/components/ui/input.jsx";
+import {useEffect, useState} from "react";
+import {useDebouncedValue} from "@/hooks/useDebouncedValue.jsx";
+import {useQA} from "@/hooks/useQA.jsx";
+import {useAssignQuizQuestionsMutation , useGetQuizQuestionsQuery} from "@/features/quizzes/quizzesApiSlice.jsx";
+import {Button} from "@/components/ui/button.jsx";
+import { useToast } from "@/components/ui/use-toast.js";
+
+
 
 export default function Assign_QA_QuizPage() {
 
     const { toast } = useToast();
-    const navigate = useNavigate()
     const role = useSelector(selectCurrentRole);
-    const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
-    const [searchQuestions, { data: questions = [], isLoading, isError , isSuccess }] = useSearchQuestionsQuery();
-    const [assignQuizQuestions] = useAssignQuizQuestionsMutation();
-    const [showResponses, setShowResponses] = useState(false);
-    const [selectedQuestions, setSelectedQuestions] = useState({});
-    const [searchQuery, setSearchQuery] = useState("");
-    const currentQuestion = questions[currentQuestionIndex];
-    const {
-    data: responses = [],
-    isLoading: responsesLoading,
-    isError: responsesError,
-    } = useGetResponsesQuery(currentQuestion?.id, { skip: !currentQuestion });
-
-  useEffect(() => {
-   setShowResponses(false);
-  }, [currentQuestionIndex]);
-
-  useEffect(() => {
-   if (searchQuery) {
-    const timeoutId = setTimeout(() => searchQuestions(searchQuery), 1500);
-    return () => clearTimeout(timeoutId);
-   }
-  }, [searchQuery, searchQuestions]);
-
-  const handleQuestionSelection = (questionId, duration) => {
-   setSelectedQuestions(prev => {
-    if (questionId in prev) {
-     const newState = { ...prev };
-     delete newState[questionId];
-     return newState;
-    } else {
-     return { ...prev, [questionId]: { id: questionId, duration } };
-    }
-   });
-  };
-  const handlePrevious = () => {
-   setCurrentQuestionIndex((prevIndex) => Math.max(prevIndex - 1, 0));
-  };
-  const handleNext = () => {
-   setCurrentQuestionIndex((prevIndex) => Math.min(prevIndex + 1, questions.length - 1));
-  };
-  const toggleResponses = () => {
-   setShowResponses(!showResponses);
-  };
-  const handleSearchChange = (event) => {
-   setSearchQuery(event.target.value);
-  };
     const { quizId } = useParams();
+    const [queryParams, setQueryParams] = useState({ page: 1, per_page: 5 });
+    const [searchQuery, setSearchQuery] = useState("");
+    const debouncedSearchQuery = useDebouncedValue(searchQuery, 1000);
+    const [selectedQuestions, setSelectedQuestions] = useState([]);
 
-    const handleAssignQuestions = async () => {
-        try {
-            const body = {
-                questions: Object.values(selectedQuestions)
-            };
-            const result = await assignQuizQuestions({ quizId, body }).unwrap();
-            toast({
-                description: result.message,
-            });
-            navigate(-1)
-        } catch (error) {
-            console.error("Error assigning questions:", error);
-            alert("Failed to assign questions. Please try again.");
-        }
+    const { data: quizQuestions, isLoading: quizQuestionsLoading, isError: quizQuestionsError } = useGetQuizQuestionsQuery({ quizId });
+    const { data, isLoading, isError, handlePaginationChange } = useQA({
+        queryParams,
+        setQueryParams,
+        searchQuery: debouncedSearchQuery,
+    });
+    const [assignQuizQuestions] = useAssignQuizQuestionsMutation();
+
+    useEffect(() => {
+        setQueryParams((prev) => ({ ...prev, page: 1 }));
+    }, [debouncedSearchQuery]);
+
+    const handleSearchChange = (e) => {
+        setSearchQuery(e.target.value);
     };
 
+    const handleQuestionSelect = (questionId) => {
+        setSelectedQuestions(prev =>
+            prev.includes(questionId)
+                ? prev.filter(id => id !== questionId)
+                : [...prev, questionId]
+        );
+    };
 
+    const handleSubmitQuestions = async () => {
+        const formattedQuestions = selectedQuestions.map(id => ({ id }));
+        try {
+            await assignQuizQuestions({
+                body: { questions: formattedQuestions },
+                quizId
+            });
+            toast({
+                title: "Questions assigned successfully!",
+                description: "All Good !",
+            })
+            setSelectedQuestions([]);
+        } catch (error) {
+            console.error("Error assigning questions:", error);
+            toast({
+                title: "Failed to assign questions. Please try again.",
+                description: "Not Good !",
+            })
+        }
+    };
+    const filteredSearchResults = data?.data
+        ? data.data.filter(
+            question => !Array.isArray(quizQuestions) || !quizQuestions.some(q => q.id === question.id)
+        )
+        : [];
 
-  return (
-      <main className="w-screen p-4">
-          <div className="px-4 py-4">
-              <BreadCrumb role={role} text={"Assign"}/>
-          </div>
-          <Input
-              type="text"
-              placeholder="Search for questions..."
-              value={searchQuery}
-              onChange={handleSearchChange}
-              className="border rounded mb-4"
-          />
-          {isLoading || responsesLoading ? (
-              <div className="flex items-center justify-center"><p>Loading... <Spinner/></p></div>
-          ) : isError || responsesError ? (
-              <div className="flex items-center justify-center"><p>Error loading data</p></div>
-          ) : !questions.length ? (
-              <div className="flex items-center justify-center"><p>No questions found!</p></div>
-          ) : currentQuestion && isSuccess ? (
-              <Card className="w-auto mb-4">
-                  <CardHeader>
-                      <CardTitle className="flex justify-between items-center">
-                          <span>Question {currentQuestionIndex + 1}</span>
-                          <div className="flex items-center space-x-2">
-                              <Checkbox
-                                  checked={currentQuestion.id in selectedQuestions}
-                                  onCheckedChange={(checked) => {
-                                      if (checked) {
-                                          handleQuestionSelection(currentQuestion.id, 1);
-                                      } else {
-                                          handleQuestionSelection(currentQuestion.id);
-                                      }
-                                  }}
-                              />
-                              {currentQuestion.id in selectedQuestions && (
-                                  <Input
-                                      type="number"
-                                      min="1"
-                                      max="60"
-                                      value={selectedQuestions[currentQuestion.id].duration}
-                                      onChange={(e) => handleQuestionSelection(currentQuestion.id, parseInt(e.target.value, 10))}
-                                      className="w-20"
-                                  />
-                              )}
-                              <span>min</span>
-                          </div>
-
-                      </CardTitle>
-                      <CardDescription>Type : {currentQuestion.type}</CardDescription>
-                  </CardHeader>
-                  <CardContent>
-                      {currentQuestion.description}
-                  </CardContent>
-                  <CardContent>
-                      {showResponses ? (
-                          responses.length > 0 ? (
-                              <div className="space-y-4">
-                                  {responses.map((response) => (
-                                      <div key={response.id} className="flex items-center space-x-2">
-                                          <Label
-                                              className={`flex-grow p-2 border rounded ${
-                                                  response.iscorrect ? 'bg-green-100 border-green-500' : 'bg-gray-100'
-                                              }`}
-                                          >
-                                              {response.content}
-                                          </Label>
-                                      </div>
-                                  ))}
-                              </div>
-                          ) : (
-                              <div>No responses assigned yet</div>
-                          )
-                      ) : null}
-                  </CardContent>
-                  <CardFooter className="flex justify-between items-center">
-                      <div className="flex items-center space-x-2">
-                          <Button
-                              variant="outline"
-                              onClick={handlePrevious}
-                              disabled={currentQuestionIndex === 0}
-                          >
-                              Previous
-                          </Button>
-                          <span>{currentQuestionIndex + 1} / {questions.length}</span>
-                          <Button
-                              variant="outline"
-                              onClick={handleNext}
-                              disabled={currentQuestionIndex === questions.length - 1}
-                          >
-                              Next
-                          </Button>
-                      </div>
-                      <Button
-                          onClick={toggleResponses}
-                          variant="outline"
-                      >
-                          {showResponses ? 'Hide Responses' : 'Show Responses'}
-                      </Button>
-                  </CardFooter>
-              </Card>
-          ) : null}
-          <p className="text-sm text-gray-600">Total questions: {Object.keys(selectedQuestions).length}</p>
-          <Button
-              onClick={handleAssignQuestions}
-              disabled={Object.keys(selectedQuestions).length === 0}
-              className="mt-4"
-          >
-              Assign Selected Questions
-          </Button>
-      </main>
-  );
+    return (
+        <main className="w-screen p-6 h-screen flex flex-col">
+            <div className="px-4 py-4">
+                <BreadCrumb route="quizzes" role={role} text="Quiz" action="Assign" />
+            </div>
+            <Input
+                type="text"
+                placeholder="Search for questions..."
+                value={searchQuery}
+                onChange={handleSearchChange}
+                className="border rounded mb-4"
+            />
+            <section className="mt-4 flex-1 overflow-y-auto">
+                {quizQuestionsLoading ? (
+                    <div className="flex w-full justify-center items-center">
+                        <Spinner />
+                    </div>
+                ) : quizQuestionsError ? (
+                    <div className="text-red-500">Failed to load quiz questions.</div>
+                ) : quizQuestions?.length === 0 ? (
+                    <div className="text-gray-500">No questions have been assigned to this quiz yet.</div>
+                ) : (
+                    <>
+                        <h2 className="text-2xl font-bold mb-4">Search Results:</h2>
+                        <QA_Card
+                            data={{data: filteredSearchResults}}
+                            pagination={
+                                data
+                                    ? {
+                                        pageIndex: data.current_page,
+                                        pageSize: data.per_page,
+                                        pageCount: data.last_page,
+                                        canNextPage: !!data.next_page_url,
+                                        canPreviousPage: !!data.prev_page_url,
+                                    }
+                                    : {}
+                            }
+                            onPaginationChange={handlePaginationChange}
+                            selectedQuestions={selectedQuestions}
+                            onQuestionSelect={handleQuestionSelect}
+                            text={"Assign"}
+                        />
+                        <div className="flex justify-between items-center sticky bottom-0 bg-white p-4 ">
+                            <p className="text-sm">
+                                Selected: {selectedQuestions.length} | Total Quiz
+                                Questions: {quizQuestions?.length || 0}
+                            </p>
+                            <Button
+                                onClick={handleSubmitQuestions}
+                                disabled={selectedQuestions.length === 0}
+                                className="bg-blue-500 text-white px-4 py-2 rounded"
+                            >
+                                Assign Selected Questions
+                            </Button>
+                        </div>
+                        <h2 className="text-2xl font-bold mt-8 mb-4">Quiz Questions:</h2>
+                        <QA_Card
+                            data={{data: quizQuestions || []}}
+                            pagination={{pageIndex: 1, pageSize: quizQuestions?.length || 0, pageCount: 1}}
+                            onPaginationChange={() => {
+                            }}
+                        />
+                    </>
+                )}
+            </section>
+        </main>
+    );
 }

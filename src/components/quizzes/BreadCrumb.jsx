@@ -8,13 +8,13 @@ import {
 import {Link} from "react-router-dom";
 
 
-export const BreadCrumb = ({ role , text  , action}) =>{
+export const BreadCrumb = ({ route, role , text  , action}) =>{
     return (
     <Breadcrumb>
         <BreadcrumbList>
             <BreadcrumbItem>
                 <BreadcrumbLink asChild>
-                    <Link to={`/${role}/quizzes`}>{text}</Link>
+                    <Link to={`/${role}/${route}`}>{text}</Link>
                 </BreadcrumbLink>
             </BreadcrumbItem>
             <BreadcrumbSeparator />
