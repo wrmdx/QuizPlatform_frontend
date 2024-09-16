@@ -2,6 +2,7 @@ import {Button} from "@/components/ui/button.jsx";
 import {ArrowUpDown} from "lucide-react";
 import {DeleteQuizSheet} from "@/components/quizzes/DeleteQuizSheet.jsx";
 import {Link} from 'react-router-dom'
+import EditQuizDialog from "@/components/quizzes/EditQuizDialog.jsx";
 
 
 
@@ -32,7 +33,7 @@ export const columns = [
     },
     {
         accessorFn: (row) => `${row.creator.first_name} ${row.creator.last_name}`,
-        id: "creatorName", // Provide a unique id for this column
+        id: "creatorName",
         header: ({ column }) => (
             <Button
                 variant="ghost"
@@ -48,17 +49,23 @@ export const columns = [
         header: "Action",
         cell: ({row}) => (
             <div className="flex space-x-2">
-                <Link to={`assign_qa/${row.original.id}`}>
+                <Link
+                    to={{pathname: `assign_qa`,
+                        search: `?id=${row.original.id}&name=${row.original.title}`}}
+                >
                     <Button variant="ghost" className="text-blue-500 hover:text-white hover:bg-blue-500">
                         Assign Questions
                     </Button>
                 </Link>
                 <Link to={`view_qa/${row.original.id}`}>
-                    <Button variant="ghost" className="text-green-500 hover:text-white hover:bg-green-400">
+                    <Button variant="ghost" className="text-blue-500 hover:text-white hover:bg-blue-500">
                         View Questions
                     </Button>
                 </Link>
-
+                <EditQuizDialog
+                    id = {row.original.id}
+                    title = {row.original.title}
+                />
                 <DeleteQuizSheet id={row.original.id}/>
             </div>
         ),

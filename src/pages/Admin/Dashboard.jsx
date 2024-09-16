@@ -1,6 +1,5 @@
-import * as React from "react"
-import { TrendingUp } from "lucide-react"
-import { Label, Pie, PieChart } from "recharts"
+import { TrendingUp } from "lucide-react";
+import { Label, Pie, PieChart } from "recharts";
 
 import {
  Card,
@@ -9,116 +8,120 @@ import {
  CardFooter,
  CardHeader,
  CardTitle,
-} from "@/components/ui/card"
+} from "@/components/ui/card";
 import {
-
  ChartContainer,
  ChartTooltip,
  ChartTooltipContent,
-} from "@/components/ui/chart"
-const chartData = [
- { browser: "chrome", visitors: 275, fill: "var(--color-chrome)" },
- { browser: "safari", visitors: 200, fill: "var(--color-safari)" },
- { browser: "firefox", visitors: 287, fill: "var(--color-firefox)" },
- { browser: "edge", visitors: 173, fill: "var(--color-edge)" },
- { browser: "other", visitors: 190, fill: "var(--color-other)" },
-]
-
-const chartConfig = {
- visitors: {
-  label: "Visitors",
- },
- chrome: {
-  label: "Chrome",
-  color: "hsl(var(--chart-1))",
- },
- safari: {
-  label: "Safari",
-  color: "hsl(var(--chart-2))",
- },
- firefox: {
-  label: "Firefox",
-  color: "hsl(var(--chart-3))",
- },
- edge: {
-  label: "Edge",
-  color: "hsl(var(--chart-4))",
- },
- other: {
-  label: "Other",
-  color: "hsl(var(--chart-5))",
- },
-}
+} from "@/components/ui/chart";
+import { useGetUsersTotalByTypeQuery } from "@/features/stats/statsApiSlice.jsx";
+import Spinner from "@/components/ui/Spinner.jsx";
 
 export default function Dashboard() {
- const totalVisitors = React.useMemo(() => {
-  return chartData.reduce((acc, curr) => acc + curr.visitors, 0)
- }, [])
+ const { data: stats = {}, isLoading, isError } = useGetUsersTotalByTypeQuery();
+
+ let currentDate = new Date().toJSON().slice(0, 10);
+ const chartData = [
+  { type: "dev", count: stats.dev, fill: "hsl(var(--chart-1))" },
+  { type: "manager", count: stats.manager, fill: "hsl(var(--chart-2))" },
+  { type: "admin", count: stats.admin, fill: "hsl(var(--chart-3))" },
+ ];
+
+ const totalUsers =
+     (stats.dev || 0) + (stats.manager || 0) + (stats.admin || 0);
+
+ const chartConfig = {
+  visitors: {
+   label: "Total Users",
+  },
+  dev: {
+   label: "Developers",
+   color: "hsl(var(--chart-1))",
+  },
+  manager: {
+   label: "Managers",
+   color: "hsl(var(--chart-2))",
+  },
+  admin: {
+   label: "Admins",
+   color: "hsl(var(--chart-3))",
+  },
+ };
 
  return (
+
      <Card className="flex flex-col w-screen">
       <CardHeader className="items-center pb-0">
-       <CardTitle>Pie Chart - Donut with Text</CardTitle>
-       <CardDescription>January - June 2024</CardDescription>
+       <CardTitle>Pie Chart - Users by Role</CardTitle>
+       <CardDescription>{currentDate}</CardDescription>
       </CardHeader>
-      <CardContent className="flex-1 pb-0">
-       <ChartContainer
-           config={chartConfig}
-           className="mx-auto aspect-square max-h-[250px]"
-       >
-        <PieChart>
-         <ChartTooltip
+         {isLoading ? (
+             <div className="flex w-full justify-center items-center">
+                 <Spinner />
+             </div>
+         ) : isError ? (
+             <div className="text-red-500">Failed to load Data.</div>
+         ) : (
+      <CardContent className="flex-1 flex pb-0 justify-center items-center">
+          <ChartContainer
+              config={chartConfig}
+              className="mx-auto w-full max-h-[250px]"
+          >
+             <PieChart>
+             <ChartTooltip
              cursor={false}
              content={<ChartTooltipContent hideLabel />}
-         />
-         <Pie
-             data={chartData}
-             dataKey="visitors"
-             nameKey="browser"
-             innerRadius={60}
-             strokeWidth={5}
-         >
-          <Label
-              content={({ viewBox }) => {
-               if (viewBox && "cx" in viewBox && "cy" in viewBox) {
-                return (
-                    <text
-                        x={viewBox.cx}
-                        y={viewBox.cy}
-                        textAnchor="middle"
-                        dominantBaseline="middle"
+             />
+                    <Pie
+                    data={chartData}
+                    dataKey="count"
+                    nameKey="type"
+                    innerRadius={60}
+                    strokeWidth={5}
                     >
-                     <tspan
-                         x={viewBox.cx}
-                         y={viewBox.cy}
-                         className="fill-foreground text-3xl font-bold"
-                     >
-                      {totalVisitors.toLocaleString()}
-                     </tspan>
-                     <tspan
-                         x={viewBox.cx}
-                         y={(viewBox.cy || 0) + 24}
-                         className="fill-muted-foreground"
-                     >
-                      Visitors
-                     </tspan>
-                    </text>
-                )
-               }
-              }}
-          />
-         </Pie>
-        </PieChart>
-       </ChartContainer>
+                          <Label
+                              content={({ viewBox }) => {
+                               if (viewBox && "cx" in viewBox && "cy" in viewBox) {
+                                return (
+                                    <text
+                                        x={viewBox.cx}
+                                        y={viewBox.cy}
+                                        textAnchor="middle"
+                                        dominantBaseline="middle"
+                                    >
+                                     <tspan
+                                         x={viewBox.cx}
+                                         y={viewBox.cy}
+                                         className="fill-foreground text-3xl font-bold"
+                                     >
+                                      {totalUsers.toLocaleString()}
+                                     </tspan>
+                                     <tspan
+                                         x={viewBox.cx}
+                                         y={(viewBox.cy || 0) + 24}
+                                         className="fill-muted-foreground"
+                                     >
+                                      Users
+                                     </tspan>
+                                    </text>
+                                );
+                               }
+                               return null;
+                              }}
+                          />
+                    </Pie>
+             </PieChart>
+          </ChartContainer>
       </CardContent>
+             )}
       <CardFooter className="flex-col gap-2 text-sm">
        <div className="flex items-center gap-2 font-medium leading-none">
         Trending up by 5.2% this month <TrendingUp className="h-4 w-4" />
        </div>
        <div className="leading-none text-muted-foreground">
-        Showing total visitors for the last 6 months
+        Showing total users for the last 6 months
        </div>
       </CardFooter>
      </Card>
- )
+ );
 }

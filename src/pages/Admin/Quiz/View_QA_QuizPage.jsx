@@ -47,7 +47,7 @@ export default function View_QA_QuizPage() {
     return (
         <main className="w-screen p-6 h-screen flex flex-col">
             <div className="px-4 py-6">
-                <BreadCrumb route="quizzes" role={role} text="Questions" action="View"/>
+                <BreadCrumb route="quizzes" role={role} origin="Quiz" action="View" action_text={"Questions"}/>
             </div>
             <h1 className="text-2xl font-bold mb-4">Quiz Questions</h1>
             {quizQuestionsLoading ? (

@@ -3,55 +3,63 @@ import { apiSlice } from '@/services/api/apiSlice';
 export const quizzesApiSlice = apiSlice.injectEndpoints({
     endpoints: (builder) => ({
         getQuizzes: builder.query({
-            query: ({per_page ,page }) => `/admin/quiz?page=${page}&per_page=${per_page}`,
+            query: ({per_page, page}) => `/quizzes?page=${page}&per_page=${per_page}`,
             providesTags: ['Quizzes'],
         }),
         getQuizzesBySkill: builder.query({
-            query : ({skill , per_page , page}) => `/admin/quizzes/get_by_skill?skill=${skill}&per_page=${per_page}&page=${page}` ,
+            query: ({skill, per_page, page}) => `/quiz/get-by-skill?skill=${skill}&per_page=${per_page}&page=${page}`,
             providesTags: ['Quizzes'],
         }),
         getQuizzesByDifficulty: builder.query({
-            query : ({difficulty , per_page , page}) => `/admin/quizzes/get_by_difficulty?difficulty=${difficulty}&per_page=${per_page}&page=${page}` ,
+            query: ({difficulty, per_page, page}) => `/quiz/get-by-difficulty?difficulty=${difficulty}&per_page=${per_page}&page=${page}`,
             providesTags: ['Quizzes'],
         }),
         searchQuizzesByTitle: builder.query({
-            query : ({title , per_page, page}) => `/admin/quizzes/search_by_title?title=${title}&page=${page}&per_page=${per_page}` ,
+            query: ({title, per_page, page}) => `/quiz/search-by-title?title=${title}&page=${page}&per_page=${per_page}`,
             providesTags: ['Quizzes']
+        }),
+        getQuizQuestions: builder.query({
+            query: ({quizId}) => `/quiz/${quizId}/view-questions`,
+            providesTags: ['Questions'],
         }),
         addQuiz: builder.mutation({
             query: (body) => ({
-                url:'/admin/quiz' ,
-                method:'POST' ,
+                url: '/quizzes',
+                method: 'POST',
+                body: body,
+            }) ,
+                invalidatesTags: ['Quizzes'],
+            }),
+        updateQuiz: builder.mutation({
+            query: ({quizId, ...body}) => ({
+                url: `/quizzes/${quizId}`,
+                method: 'PUT',
                 body: body
             }),
             invalidatesTags: ['Quizzes'],
         }),
         deleteQuiz: builder.mutation({
             query: (quizId) => ({
-                url: `/admin/quiz/${quizId}`,
+                url: `/quizzes/${quizId}`,
                 method: 'DELETE',
             }),
             invalidatesTags: ['Quizzes'],
-        }) ,
-        getQuizQuestions : builder.query({
-            query : ({quizId}) => `/admin/quiz/${quizId}/view_questions` ,
-            providesTags : ['Questions'] ,
-        }) ,
+        }),
         assignQuizQuestions: builder.mutation({
-            query: ({body ,quizId}) => ({
-                url:`/admin/quiz/${quizId}/assign-questions` ,
-                method:'POST' ,
+            query: ({body, quizId}) => ({
+                url: `/quiz/${quizId}/assign-questions`,
+                method: 'POST',
                 body: body
             }),
-            invalidatesTags: ['Quizzes' , 'Questions'],
+            invalidatesTags: ['Quizzes', 'Questions'],
         }),
         deleteQuizQuestions: builder.mutation({
-            query: ({quizId,body}) => ({
-                url:`/admin/quiz/${quizId}/delete-questions` ,
-                method:'DELETE' ,
+            query: ({quizId, body}) => ({
+                url: `/quiz/${quizId}/delete-questions`,
+                method: 'DELETE',
                 body: body
             }),
-            invalidatesTags: ['Quizzes' , 'Questions'],
+            invalidatesTags: ['Quizzes', 'Questions'],
         }),
     }),
 })
@@ -59,4 +67,4 @@ export const quizzesApiSlice = apiSlice.injectEndpoints({
 export const {useDeleteQuizQuestionsMutation , useAssignQuizQuestionsMutation  ,
     useGetQuizQuestionsQuery , useGetQuizzesQuery, useAddQuizMutation , useDeleteQuizMutation,
     useGetQuizzesBySkillQuery, useSearchQuizzesByTitleQuery,
-    useGetQuizzesByDifficultyQuery} = quizzesApiSlice;
+    useGetQuizzesByDifficultyQuery , useUpdateQuizMutation} = quizzesApiSlice;

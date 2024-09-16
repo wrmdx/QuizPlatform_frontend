@@ -35,15 +35,18 @@ function App() {
                     <Route path="qa" element={<QA />} />
                     <Route path="quizzes" element={<Quiz />} />
                     <Route path="quizzes/add" element={<AddQuizPage />} />
-                    <Route path="quizzes/assign_qa/:quizId" element={<Assign_QA_QuizPage />} />
+                    <Route path="quizzes/assign_qa" element={<Assign_QA_QuizPage />} />
                     <Route path="quizzes/view_qa/:quizId" element={<View_QA_QuizPage />} />
-
-
                 </Route>
 
                 <Route path="manager" element={<RequireAuthRole allowedRoles={['manager']} />}>
                     <Route path="" element={<ManagerDashboard />} />
-                    <Route path="dashboard" element={<ManagerDashboard />} />
+                    <Route path="dashboard" element={<AdminDashboard />} />
+                    <Route path="qa" element={<QA />} />
+                    <Route path="quizzes" element={<Quiz />} />
+                    <Route path="quizzes/add" element={<AddQuizPage />} />
+                    <Route path="quizzes/assign_qa" element={<Assign_QA_QuizPage />} />
+                    <Route path="quizzes/view_qa/:quizId" element={<View_QA_QuizPage />} />
                 </Route>
 
                 <Route path="dev" element={<RequireAuthRole allowedRoles={['dev']} />}>

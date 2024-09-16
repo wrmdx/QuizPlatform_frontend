@@ -1,4 +1,3 @@
-import { useState } from 'react';
 import { Input } from "@/components/ui/input.jsx";
 import {
     AlertDialog,
@@ -17,9 +16,13 @@ import { Button } from "@/components/ui/button.jsx";
 import { ReloadIcon } from "@radix-ui/react-icons";
 import {CircleUserRound} from "lucide-react";
 import {useSelector} from "react-redux";
-import {selectCurrentName} from "@/features/auth/authSlice.jsx";
+import {selectCurrentLastName, selectCurrentName} from "@/features/auth/authSlice.jsx";
+import {useForm} from "react-hook-form";
+import {zodResolver} from "@hookform/resolvers/zod";
+import {useState} from "react";
 
 const ChangePasswordDialog = () => {
+    const [isOpen, setIsOpen] = useState(false);
 
     const changePasswordSchema = z.object({
         currentPassword: z.string().min(1, "Current password is required"),
@@ -33,40 +36,34 @@ const ChangePasswordDialog = () => {
         message: "Passwords do not match",
         path: ["confirmPassword"],
     });
-    const userName = useSelector(selectCurrentName) ;
-    const [currentPassword, setCurrentPassword] = useState('');
-    const [newPassword, setNewPassword] = useState('');
-    const [confirmPassword, setConfirmPassword] = useState('');
+
+    const first_name = useSelector(selectCurrentName) ;
+    const last_name = useSelector(selectCurrentLastName) ;
     const { toast } = useToast();
     const [changePassword, { isLoading }] = useChangePasswordMutation();
+    const form = useForm({
+        resolver: zodResolver(changePasswordSchema),
+        defaultValues: {
+            currentPassword: '',
+            newPassword: '',
+            confirmPassword: '',
+        },
+    });
 
-    const handleChangePassword = async () => {
-        const result = changePasswordSchema.safeParse({
-            currentPassword,
-            newPassword,
-            confirmPassword,
-        });
-
-        if (!result.success) {
-            toast({
-                variant: "destructive",
-                title: "Error",
-                description: result.error.errors[0].message,
-            });
-            return;
-        }
-
+    const onSubmit = async (data) => {
         try {
             await changePassword({
-                current_password: currentPassword,
-                password: newPassword,
-                password_confirmation: confirmPassword
+                current_password: data.currentPassword,
+                password: data.newPassword,
+                password_confirmation: data.confirmPassword
             }).unwrap();
             toast({
                 variant: "success",
                 title: "Success",
                 description: "Password changed successfully.",
             });
+            setIsOpen(false);
+            form.reset();
         } catch (error) {
             toast({
                 variant: "destructive",
@@ -77,14 +74,14 @@ const ChangePasswordDialog = () => {
     };
 
     return (
-        <AlertDialog>
+        <AlertDialog open={isOpen} onOpenChange={setIsOpen}>
             <AlertDialogTrigger className="w-full" asChild>
                 <Button className="w-full flex items-center hover:bg-blue-400 hover:text-white"
                         variant="secondary"
                 >
                     <CircleUserRound/>
                     <div className="font-medium dark:text-white w-full inline-flex justify-start ml-2">
-                        <p>{userName}</p>
+                        <p>{first_name} {last_name}</p>
                     </div>
                 </Button>
             </AlertDialogTrigger>
@@ -95,45 +92,44 @@ const ChangePasswordDialog = () => {
                         Enter your current password and the new password to change it.
                     </AlertDialogDescription>
                 </AlertDialogHeader>
-                <div className="space-y-4">
-                    <Input
-                        type="password"
-                        placeholder="Current Password"
-                        value={currentPassword}
-                        onChange={(e) => setCurrentPassword(e.target.value)}
-                        disabled={isLoading}
-                    />
-                    <Input
-                        type="password"
-                        placeholder="New Password"
-                        value={newPassword}
-                        onChange={(e) => setNewPassword(e.target.value)}
-                        disabled={isLoading}
-                    />
-                    <Input
-                        type="password"
-                        placeholder="Confirm New Password"
-                        value={confirmPassword}
-                        onChange={(e) => setConfirmPassword(e.target.value)}
-                        disabled={isLoading}
-                    />
-                </div>
-                <AlertDialogFooter>
-                    <AlertDialogCancel >Cancel</AlertDialogCancel>
-                    <AlertDialogAction onClick={handleChangePassword} disabled={isLoading}>
-                        {isLoading ? (
-                            <Button disabled>
-                                <ReloadIcon className="mr-2 h-4 w-4 animate-spin" />
-                                Please wait
-                            </Button>
-                        ) : (
-                            'Change Password'
-                        )}
-                    </AlertDialogAction>
-                </AlertDialogFooter>
+                <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+                    <div className="space-y-4">
+                        <Input
+                            type="password"
+                            placeholder="Current Password"
+                            {...form.register('currentPassword')}
+                            disabled={isLoading}
+                        />
+                        <Input
+                            type="password"
+                            placeholder="New Password"
+                            {...form.register('newPassword')}
+                            disabled={isLoading}
+                        />
+                        <Input
+                            type="password"
+                            placeholder="Confirm New Password"
+                            {...form.register('confirmPassword')}
+                            disabled={isLoading}
+                        />
+                    </div>
+                    <AlertDialogFooter>
+                        <AlertDialogCancel type="button">Cancel</AlertDialogCancel>
+                        <AlertDialogAction type="submit" disabled={isLoading}>
+                            {isLoading ? (
+                                <Button>
+                                    <ReloadIcon className="mr-2 h-4 w-4 animate-spin"/>
+                                    Please wait
+                                </Button>
+                            ) : (
+                                'Save changes'
+                            )}
+                        </AlertDialogAction>
+                    </AlertDialogFooter>
+                </form>
             </AlertDialogContent>
         </AlertDialog>
-    );
+);
 };
 
 export default ChangePasswordDialog;

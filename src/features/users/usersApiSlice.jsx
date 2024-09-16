@@ -3,27 +3,27 @@ import { apiSlice } from '@/services/api/apiSlice';
 export const usersApiSlice = apiSlice.injectEndpoints({
     endpoints: (builder) => ({
         getUsers: builder.query({
-            query: ({per_page, page}) => `/admin/users?page=${page}&per_page=${per_page}`,
+            query: ({per_page, page}) => `/users?page=${page}&per_page=${per_page}`,
             providesTags: ['Users'],
         }),
         getUsersByRole: builder.query({
-            query : ({roleName ,page , per_page}) => `/admin/user/paginate_by_role?role_name=${roleName}&page=${page}&per_page=${per_page}` ,
+            query : ({roleName ,page , per_page}) => `/user/paginate-by-role?role_name=${roleName}&page=${page}&per_page=${per_page}` ,
             providesTags: ['Users']
         }),
         getUsersByEmail: builder.query({
-            query : ({email , per_page,  page}) =>  `/admin/user/search?email=${email}&per_page=${per_page}&page=${page}` ,
+            query : ({email , per_page,  page}) =>  `/user/search?email=${email}&per_page=${per_page}&page=${page}` ,
             providesTags:['Users']
         }),
         deleteUser: builder.mutation({
             query: (userId) => ({
-                url: `/admin/users/${userId}`,
+                url: `/users/${userId}`,
                 method: 'DELETE',
             }),
             invalidatesTags: ['Users'],
         }),
         addUser: builder.mutation({
             query: (body) => ({
-                url: '/admin/users',
+                url: '/users',
                 method: 'POST',
                 body : body,
             }),
@@ -31,7 +31,7 @@ export const usersApiSlice = apiSlice.injectEndpoints({
         }),
         updateUser: builder.mutation({
             query: ({id ,...body}) => ({
-                url: `/admin/users/${id}`,
+                url: `/users/${id}`,
                 method: 'PUT',
                 body: body,
             }),
@@ -39,7 +39,7 @@ export const usersApiSlice = apiSlice.injectEndpoints({
         }),
         changePassword: builder.mutation({
             query: (body) => ({
-                url: '/admin/user/change_password',
+                url: '/users/change-password',
                 method: 'POST',
                 body: body,
             }),

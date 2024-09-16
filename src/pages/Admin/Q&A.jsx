@@ -70,6 +70,8 @@ const QA = () => {
                                     }
                                     : {}
                             }
+                            canPaginate={true}
+                            canDelete={true}
                             onPaginationChange={handlePaginationChange}
                         />
                         <div className="flex justify-end mt-4">

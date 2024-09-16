@@ -9,6 +9,5 @@ const rootLoader = () => {
     if (!token) {
         return redirect('/login')
     }
-
 }
 export default rootLoader

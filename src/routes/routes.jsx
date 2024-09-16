@@ -15,7 +15,9 @@ const devRoutes = [
 
 const managerRoutes = [
     { url: "/manager/dashboard", name: "Dashboard", icon: <LayoutDashboard className="mr-2 w-4 h-4" /> },
-    { url: "/manager/quizzes", name: "Quiz Management", icon: <BookCheck className="mr-2 w-4 h-4" /> },
+    { url: "/manager/quizzes", name: "Quiz", icon: <BookCheck className="mr-2 w-4 h-4" /> },
+    { url: "/manager/qa", name: "Q&A", icon: <CircleHelp className="mr-2 w-4 h-4" /> },
+    { url: "/manager/reports", name: "Reports", icon: <ClipboardMinus className="mr-2 w-4 h-4" /> },
 ];
 
 export const getRoutesByRole = (role) => {

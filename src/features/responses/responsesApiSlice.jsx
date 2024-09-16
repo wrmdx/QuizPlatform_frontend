@@ -3,12 +3,12 @@ import { apiSlice } from '@/services/api/apiSlice';
 export const responsesApiSlice = apiSlice.injectEndpoints({
     endpoints: (builder) => ({
         getResponses: builder.query({
-            query: (questionId) => `/admin/question/${questionId}/responses`,
+            query: (questionId) => `/question/${questionId}/responses`,
             providesTags: ['Responses'],
         }),
         setResponses: builder.mutation({
             query: ({body, questionId}) =>({
-                url: `/admin/question/${questionId}/assign-responses`,
+                url: `/question/${questionId}/assign-responses`,
                 method: 'POST',
                 body : body
             }),
@@ -16,7 +16,7 @@ export const responsesApiSlice = apiSlice.injectEndpoints({
         }),
         addResponse: builder.mutation({
             query: ({body}) =>({
-                url: `/admin/responses`,
+                url: `/responses`,
                 method: 'POST',
                 body : body
             }),

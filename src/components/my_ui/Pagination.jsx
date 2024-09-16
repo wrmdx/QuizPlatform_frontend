@@ -2,7 +2,7 @@ import {Button}  from "@/components/ui/button.jsx";
 
 export const Pagination = ({ pagination, onPaginationChange }) => {
     return (
-        <>
+        <section className="mr-4">
             <Button
                 variant="outline"
                 size="sm"
@@ -11,7 +11,7 @@ export const Pagination = ({ pagination, onPaginationChange }) => {
             >
                 Previous
             </Button>
-            <span>
+            <span className="mx-3">
                 Page {pagination.pageIndex} of {pagination.pageCount}
             </span>
             <Button
@@ -22,7 +22,7 @@ export const Pagination = ({ pagination, onPaginationChange }) => {
             >
                 Next
             </Button>
-        </>
+        </section>
     );
 };
 

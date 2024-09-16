@@ -179,7 +179,6 @@ export function AddUserForm() {
                                     Please wait
                                 </Button>
                             }
-
                         </DialogFooter>
                     </form>
                 </Form>

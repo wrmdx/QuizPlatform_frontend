@@ -55,7 +55,7 @@ const Users = () => {
                     <Spinner />
                 </div>
             ) : isError ? (
-                <div className="text-red-500">Failed to load questions.</div>
+                <div className="text-red-500">Failed to load Users.</div>
             ) : (
                 <div>
                     <DataTable

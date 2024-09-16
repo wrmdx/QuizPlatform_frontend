@@ -37,7 +37,8 @@ const Login = () => {
             dispatch(setCredentials({
                 token: userData.token,
                 role: userData.role,
-                name: userData.name
+                name: userData.name ,
+                last_name : userData.last_name ,
             }));
             navigate(`/${userData.role}`);
         } catch (err) {
