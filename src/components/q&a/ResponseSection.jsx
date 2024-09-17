@@ -1,6 +1,7 @@
 import {useGetResponsesQuery} from "@/features/responses/responsesApiSlice.jsx";
 import Spinner from "@/components/ui/Spinner.jsx";
 import {Label} from "@/components/ui/label.jsx";
+import { renderDescription } from "@/utils/codeBlockUtils.jsx";
 
 export function ResponseSection({ questionId }) {
 
@@ -27,7 +28,7 @@ export function ResponseSection({ questionId }) {
                                             response.iscorrect ? 'bg-green-100 border-green-500' : 'bg-gray-100'
                                         }`}
                                     >
-                                        {response.content}
+                                        {renderDescription(response.content)}
                                     </Label>
                                 </div>
                             ))}

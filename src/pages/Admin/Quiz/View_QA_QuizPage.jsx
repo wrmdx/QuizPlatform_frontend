@@ -45,7 +45,7 @@ export default function View_QA_QuizPage() {
     };
 
     return (
-        <main className="w-screen p-6 h-screen flex flex-col">
+        <main className="w-screen p-6 pb-3 h-screen flex flex-col">
             <div className="px-4 py-6">
                 <BreadCrumb route="quizzes" role={role} origin="Quiz" action="View" action_text={"Questions"}/>
             </div>
@@ -59,16 +59,18 @@ export default function View_QA_QuizPage() {
             ) : quizQuestions?.length === 0 ? (
                 <div className="text-gray-500">No questions have been assigned to this quiz yet.</div>
             ) : (
-                <QA_Card
-                    data={{data: quizQuestions}}
-                    pagination={{pageIndex: 1, pageSize: quizQuestions.length, pageCount: 1}}
-                    onPaginationChange={() => {
-                    }}
-                    onQuestionDelete={handleDeleteQuestion}
-                    selectedQuestions={selectedQuestions}
-                    onQuestionSelect={handleQuestionSelect}
-                    text={`Delete`}
-                />
+                <section className="mt-4 flex-1 overflow-y-auto">
+                    <QA_Card
+                        data={{data: quizQuestions}}
+                        pagination={{pageIndex: 1, pageSize: quizQuestions.length, pageCount: 1}}
+                        onPaginationChange={() => {
+                        }}
+                        onQuestionDelete={handleDeleteQuestion}
+                        selectedQuestions={selectedQuestions}
+                        onQuestionSelect={handleQuestionSelect}
+                        text={`Delete`}
+                    />
+                </section>
 
             )}
             <div className="flex justify-between items-center sticky bottom-0 bg-white p-4 ">
