@@ -10,16 +10,18 @@ import {useQA} from "@/hooks/useQA.jsx";
 import {useAssignQuizQuestionsMutation , useGetQuizQuestionsQuery} from "@/features/quizzes/quizzesApiSlice.jsx";
 import {Button} from "@/components/ui/button.jsx";
 import { useToast } from "@/components/ui/use-toast.js";
-import { useSearchParams } from 'react-router-dom';
+import {useLocation, useParams} from 'react-router-dom';
 import {ReloadIcon} from "@radix-ui/react-icons";
 
 
 export default function Assign_QA_QuizPage() {
 
+
+    const location = useLocation();
+    const { quizTitle } = location.state || {};
     const { toast } = useToast();
     const role = useSelector(selectCurrentRole);
-    const [searchParams] = useSearchParams();
-    const quizId = searchParams.get('id');
+    const { quizId } = useParams();
     const [queryParams, setQueryParams] = useState({ page: 1, per_page: 5 });
     const [searchQuery, setSearchQuery] = useState("");
     const debouncedSearchQuery = useDebouncedValue(searchQuery, 1000);
@@ -78,15 +80,12 @@ export default function Assign_QA_QuizPage() {
     return (
         <main className="w-screen p-6 h-screen flex flex-col">
             <div className="px-4 py-4">
-                <BreadCrumb route="quizzes" role={role} origin="Quiz" action="Assign" action_text={"Questions"} />
+                <BreadCrumb route="quizzes" role={role} origin="Quiz" action="Assign" action_text={"Questions"}/>
             </div>
-            <Input
-                type="text"
-                placeholder="Search for questions..."
-                value={searchQuery}
-                onChange={handleSearchChange}
-                className="border rounded mb-4"
-            />
+            <div className="flex items-center space-x-4 mb-8 mt-2">
+                <h1 className="text-2xl font-bold">Quiz Title :</h1>
+                <span className="text-2xl font-semibold">{quizTitle}</span>
+            </div>
             <section className="mt-4 flex-1 overflow-y-auto">
                 {quizQuestionsLoading ? (
                     <div className="flex w-full justify-center items-center">
@@ -98,26 +97,37 @@ export default function Assign_QA_QuizPage() {
                     <div className="text-gray-500">No questions have been assigned to this quiz yet.</div>
                 ) : (
                     <>
-                        <h2 className="text-2xl font-bold mb-4">Search Results:</h2>
-                        <QA_Card
-                            data={{data: filteredSearchResults}}
-                            pagination={
-                                data
-                                    ? {
-                                        pageIndex: data.current_page,
-                                        pageSize: data.per_page,
-                                        pageCount: data.last_page,
-                                        canNextPage: !!data.next_page_url,
-                                        canPreviousPage: !!data.prev_page_url,
-                                    }
-                                    : {}
-                            }
-                            canPaginate={true}
-                            onPaginationChange={handlePaginationChange}
-                            selectedQuestions={selectedQuestions}
-                            onQuestionSelect={handleQuestionSelect}
-                            text={"Assign"}
-                        />
+                        <div>
+                        <div className="sticky top-0 z-10 bg-white p-2">
+                                <Input
+                                    type="text"
+                                    placeholder="Search for questions..."
+                                    value={searchQuery}
+                                    onChange={handleSearchChange}
+                                    className="border rounded mb-4 w-full"
+                                />
+                            </div>
+                            <h2 className="text-2xl font-bold mb-4">Search Results:</h2>
+                            <QA_Card
+                                data={{data: filteredSearchResults}}
+                                pagination={
+                                    data
+                                        ? {
+                                            pageIndex: data.current_page,
+                                            pageSize: data.per_page,
+                                            pageCount: data.last_page,
+                                            canNextPage: !!data.next_page_url,
+                                            canPreviousPage: !!data.prev_page_url,
+                                        }
+                                        : {}
+                                }
+                                canPaginate={true}
+                                onPaginationChange={handlePaginationChange}
+                                selectedQuestions={selectedQuestions}
+                                onQuestionSelect={handleQuestionSelect}
+                                text={"Assign"}
+                            />
+                        </div>
                         <div className="flex justify-between items-center sticky bottom-0 bg-white p-4 ">
                             <p className="text-sm">
                                 Selected: {selectedQuestions.length} | Total Quiz

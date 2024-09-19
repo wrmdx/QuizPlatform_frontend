@@ -56,11 +56,11 @@ const SideBar = () => {
         <div className="flex">
             <nav className="flex flex-col justify-between border-l border px-4 py-3 w-full">
                 <div className="flex h-14 items-center px-4 lg:h-[60px] lg:px-6" id="logo">
-                    <Link to={role+"/dashboard"} className="flex items-center gap-2 font-semibold">
-                            <span className="border-b text-2xl">
-                                <span className="text-blue-700">KJR</span>
-                                Quiz
-                            </span>
+                    <Link to={role === "dev" ? "/dev/quizzes" : `/${role}/dashboard`} className="flex items-center gap-2 font-semibold">
+                        <span className="border-b text-2xl">
+                            <span className="text-blue-700">KJR</span>
+                            Quiz
+                        </span>
                     </Link>
                 </div>
                 <div className="mt-40">

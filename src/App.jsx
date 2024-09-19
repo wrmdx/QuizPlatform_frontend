@@ -34,7 +34,7 @@ function App() {
                     <Route path="qa" element={<QA />} />
                     <Route path="quizzes" element={<Quiz />} />
                     <Route path="quizzes/add" element={<AddQuizPage />} />
-                    <Route path="quizzes/assign_qa" element={<Assign_QA_QuizPage />} />
+                    <Route path="quizzes/assign_qa/:quizId" element={<Assign_QA_QuizPage />} />
                     <Route path="quizzes/view_qa/:quizId" element={<View_QA_QuizPage />} />
                 </Route>
 
@@ -44,7 +44,7 @@ function App() {
                     <Route path="qa" element={<QA />} />
                     <Route path="quizzes" element={<Quiz />} />
                     <Route path="quizzes/add" element={<AddQuizPage />} />
-                    <Route path="quizzes/assign_qa" element={<Assign_QA_QuizPage />} />
+                    <Route path="quizzes/assign_qa/:quizId" element={<Assign_QA_QuizPage />} />
                     <Route path="quizzes/view_qa/:quizId" element={<View_QA_QuizPage />} />
                 </Route>
 

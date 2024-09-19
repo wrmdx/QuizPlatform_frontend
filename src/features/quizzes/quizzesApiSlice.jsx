@@ -22,13 +22,21 @@ export const quizzesApiSlice = apiSlice.injectEndpoints({
             query: ({quizId}) => `/quiz/${quizId}/view-questions`,
             providesTags: ['Questions'],
         }),
+        takeQuiz: builder.mutation({
+            query : (body) =>({
+                url : `/dev/quiz/take` ,
+                method : 'POST' ,
+                body : body
+            }),
+            providesTags: ['Token'],
+        }) ,
         addQuiz: builder.mutation({
             query: (body) => ({
                 url: '/quizzes',
                 method: 'POST',
                 body: body,
             }) ,
-                invalidatesTags: ['Quizzes'],
+            invalidatesTags: ['Quizzes'],
             }),
         updateQuiz: builder.mutation({
             query: ({quizId, ...body}) => ({
@@ -66,5 +74,5 @@ export const quizzesApiSlice = apiSlice.injectEndpoints({
 
 export const {useDeleteQuizQuestionsMutation , useAssignQuizQuestionsMutation  ,
     useGetQuizQuestionsQuery , useGetQuizzesQuery, useAddQuizMutation , useDeleteQuizMutation,
-    useGetQuizzesBySkillQuery, useSearchQuizzesByTitleQuery,
+    useGetQuizzesBySkillQuery, useSearchQuizzesByTitleQuery, useTakeQuizMutation ,
     useGetQuizzesByDifficultyQuery , useUpdateQuizMutation} = quizzesApiSlice;

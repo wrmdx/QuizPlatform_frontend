@@ -10,7 +10,7 @@ import { FormProvider, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useToast } from "@/components/ui/use-toast.js";
 import {useNavigate} from "react-router-dom";
-import {setCredentials} from "@/features/auth/authSlice.jsx";
+import { setCredentials} from "@/features/auth/authSlice.jsx";
 
 
 const Login = () => {

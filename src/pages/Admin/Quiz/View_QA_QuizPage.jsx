@@ -1,4 +1,4 @@
-import { useParams } from "react-router-dom";
+import {useLocation, useParams} from "react-router-dom";
 import { useGetQuizQuestionsQuery, useDeleteQuizQuestionsMutation } from "@/features/quizzes/quizzesApiSlice.jsx";
 import Spinner from "@/components/ui/Spinner.jsx";
 import QA_Card from "@/components/q&a/Q&A_Card.jsx";
@@ -11,7 +11,8 @@ import {useToast} from "@/components/ui/use-toast.js";
 
 export default function View_QA_QuizPage() {
 
-
+    const location = useLocation();
+    const { quizTitle } = location.state || {};
     const { toast } = useToast();
     const role = useSelector(selectCurrentRole);
     const { quizId } = useParams();
@@ -49,7 +50,11 @@ export default function View_QA_QuizPage() {
             <div className="px-4 py-6">
                 <BreadCrumb route="quizzes" role={role} origin="Quiz" action="View" action_text={"Questions"}/>
             </div>
-            <h1 className="text-2xl font-bold mb-4">Quiz Questions</h1>
+            <div className="flex items-center space-x-4 mb-8">
+                <h1 className="text-2xl font-bold">Quiz Title :</h1>
+                <span className="text-2xl font-semibold">{quizTitle}</span>
+            </div>
+            <h1 className="text-2xl font-bold mb-4">Quiz Questions : </h1>
             {quizQuestionsLoading ? (
                 <div className="flex w-full justify-center items-center">
                     <Spinner/>
