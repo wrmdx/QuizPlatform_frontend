@@ -10,7 +10,7 @@ const adminRoutes = [
 ];
 
 const devRoutes = [
-    { url: "/dev/quizzes", name: "Take Quiz", icon: <BookCheck className="mr-2 w-4 h-4" /> },
+    { url: "/dev/take_quiz", name: "Take Quiz", icon: <BookCheck className="mr-2 w-4 h-4" /> },
 ];
 
 const managerRoutes = [

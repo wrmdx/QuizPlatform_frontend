@@ -5,7 +5,6 @@ import { z } from "zod";
 import { useToast } from "@/components/ui/use-toast";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { ToastAction } from "@/components/ui/toast";
 import {
     Form,
     FormControl,
@@ -15,7 +14,10 @@ import {
     FormLabel,
     FormMessage
 } from "@/components/ui/form.jsx";
-import { useNavigate } from "react-router-dom";
+import { setQuestions } from '@/features/quizzes/quizSlice';
+import {useDispatch} from "react-redux";
+import {useNavigate} from "react-router-dom";
+
 
 const otpSchema = z.object({
     token: z.string().length(6, "OTP must be exactly 6 digits long")
@@ -24,8 +26,8 @@ const otpSchema = z.object({
 const TakeQuizPage = () => {
     const [takeQuiz] = useTakeQuizMutation();
     const { toast } = useToast();
+    const dispatch = useDispatch();
     const navigate = useNavigate();
-
     const form = useForm({
         resolver: zodResolver(otpSchema),
         defaultValues: {
@@ -37,21 +39,30 @@ const TakeQuizPage = () => {
         try {
             console.log('Submitting data:', data);
             let token = data.token;
-            const result = await takeQuiz({token : token}).unwrap();
-            toast({
-                description: result.message  ,
-            });
-            // navigate('/success-page');
+            const result = await takeQuiz({token: token}).unwrap();
+
+            console.log('API response:', result);
+
+            if (result && result.questions && result.questions.length!==0 ) {
+                console.log('Dispatching setQuestions with:', result.questions);
+                dispatch(setQuestions(result.questions));
+                // toast({
+                //     description: "Quiz data received successfully.",
+                // });
+                console.log('Quiz data received successfully.')
+                navigate('/dev/conditions');
+            } else {
+                throw new Error("Quiz not ready yet ! ");
+            }
         } catch (err) {
             console.error("Failed to take quiz:", err);
             toast({
                 title: "Uh oh! Something went wrong.",
-                description: err.data.message,
+                description: err.message || "Failed to start the quiz. Please try again.",
                 variant: "destructive",
             });
         }
     };
-
     return (
         <main className="w-screen h-screen flex items-center justify-center">
             <Form {...form}>

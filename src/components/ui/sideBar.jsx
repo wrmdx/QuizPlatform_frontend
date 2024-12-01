@@ -58,8 +58,8 @@ const SideBar = () => {
                 <div className="flex h-14 items-center px-4 lg:h-[60px] lg:px-6" id="logo">
                     <Link to={role === "dev" ? "/dev/quizzes" : `/${role}/dashboard`} className="flex items-center gap-2 font-semibold">
                         <span className="border-b text-2xl">
-                            <span className="text-blue-700">KJR</span>
-                            Quiz
+                            <span className="text-blue-700">Test</span>
+                            Box
                         </span>
                     </Link>
                 </div>

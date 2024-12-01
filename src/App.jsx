@@ -14,6 +14,9 @@ import PublicRoute from "@/features/auth/publicRoute.jsx";
 import Assign_QA_QuizPage from "@/pages/Admin/Quiz/Assign_Q&A_QuizPage.jsx";
 import View_QA_QuizPage from "@/pages/Admin/Quiz/View_QA_QuizPage.jsx";
 import TakeQuizPage from "@/pages/Developer/TakeQuizPage.jsx" ;
+import Test from "@/pages/Developer/Test.jsx";
+import EndQuizPage from "@/pages/Developer/EndQuiz.jsx";
+import {Conditions} from "@/pages/Developer/Conditions.jsx";
 
 function App() {
 
@@ -49,13 +52,15 @@ function App() {
                 </Route>
 
                 <Route path="dev" element={<RequireAuthRole allowedRoles={['dev']} />}>
-                    <Route path="" element={<TakeQuizPage />} />
-                    <Route path="quizzes" element={<TakeQuizPage />} />
+                    <Route path="take_quiz" element={<TakeQuizPage />} />
+                    <Route path="test" element={<Test />} />
+                    <Route path="conditions" element={<Conditions />} />
+
                 </Route>
 
                 <Route path="*" element={<ErrorPage />} />
-
             </Route>
+            <Route path="end-quiz" element={<EndQuizPage />} />
         </Routes>
     );
 }
